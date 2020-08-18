@@ -63,7 +63,21 @@ TN2019 <- subset(TN2019, select=-co_applicant_sex_observed)
 # remove columns with duplicated age information
 TN2019 <- subset(TN2019, select=-applicant_age_above_62)
 TN2019 <- subset(TN2019, select=-co_applicant_age_above_62)
-#col_count = 67
+# col count = 67
+
+# remove columns denial_reason_X; analysis will use action_taken to reflect approved or denied status
+TN2019 <- subset(TN2019, select=-denial_reason_1)
+TN2019 <- subset(TN2019, select=-denial_reason_2)
+TN2019 <- subset(TN2019, select=-denial_reason_3)
+TN2019 <- subset(TN2019, select=-denial_reason_4)
+# col count = 63
+
+# remove low-information columns 
+TN2019 <- subset(TN2019, select=-aus_2)
+TN2019 <- subset(TN2019, select=-aus_3)
+TN2019 <- subset(TN2019, select=-aus_4)
+TN2019 <- subset(TN2019, select=-aus_5)
+# col count = 59
 
 
 
