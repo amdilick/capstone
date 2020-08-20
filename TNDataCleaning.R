@@ -10,7 +10,6 @@ TN2019 <- subset(X2019publicTN_allColumns, select=-activity_year)
 TN2019 <- subset(TN2019, select=-state_code)
 # col count = 97
 
-
 # remove rows with action_taken in (4,5,6)
 # action_taken = 4 (application withdrawn)
 # action_taken = 5 (application closed as incomplete)
@@ -78,6 +77,4 @@ TN2019 <- subset(TN2019, select=-aus_3)
 TN2019 <- subset(TN2019, select=-aus_4)
 TN2019 <- subset(TN2019, select=-aus_5)
 # col count = 59
-
-
 
