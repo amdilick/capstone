@@ -35,8 +35,8 @@ TN2019 <- subset(TN2019, select=-co_applicant_race_2)
 TN2019 <- subset(TN2019, select=-co_applicant_race_3)
 TN2019 <- subset(TN2019, select=-co_applicant_race_4)
 TN2019 <- subset(TN2019, select=-co_applicant_race_5)
-TN2019 <- subset(TN2019, select=-applicant_sex)
-TN2019 <- subset(TN2019, select=-co_applicant_sex)
+#TN2019 <- subset(TN2019, select=-applicant_sex)
+#TN2019 <- subset(TN2019, select=-co_applicant_sex)
 
 ##############################################################
 # remove columns that have data aggregated from 2 columns

@@ -146,7 +146,7 @@ convert_interest_only_payment <- function(interest_only_payment){
 }
 
 TN2019$Interest_Only_Payment <- sapply(TN2019$interest_only_payment,convert_interest_only_payment)
-TN2019$Interest_Only_Payment(TN2019$Interest_Only_Payment)
+TN2019$Interest_Only_Payment <- as.factor(TN2019$Interest_Only_Payment)
 # drop action_taken (lower case) column 
 TN2019 <- subset(TN2019, select= -interest_only_payment)
 
@@ -160,8 +160,21 @@ convert_ballon_payment <- function(balloon_payment){
 }
 
 TN2019$Balloon_Payment <- sapply(TN2019$balloon_payment,convert_baloon_payment)
-TN2019$Balloon_Payment(TN2019$Balloon_Payment)
+TN2019$Balloon_Payment <- as.factor(TN2019$Balloon_Payment)
 # drop action_taken (lower case) column 
 TN2019 <- subset(TN2019, select= -balloon_payment)
 
+##########################################################################
+
+# convert balloon_payment levels from numbers to descriptives
+convert_ballon_payment <- function(balloon_payment){
+  if (balloon_payment == 1){  return('Balloon payment')  }
+  else if (balloon_payment == 2){  return('Not a balloon payment')  }
+  else if (balloon_payment == 1111){ return('Exempt')  }
+}
+
+TN2019$Balloon_Payment <- sapply(TN2019$balloon_payment,convert_baloon_payment)
+TN2019$Balloon_Payment <- as.factor(TN2019$Balloon_Payment)
+# drop action_taken (lower case) column 
+TN2019 <- subset(TN2019, select= -balloon_payment)
 
