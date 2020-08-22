@@ -101,3 +101,8 @@ TN2019 <- subset(TN2019, county_code!='')
 TN2019 <- subset(TN2019, census_tract!='') 
 # row count = 268998
 
+# remove rows for derived_sex = 'Not available' 
+# 'Not available' indicates that the applicant is not a natural person (i.e. business), or was not reported by the applicant
+TN2019 <- subset(TN2019, derived_sex != 'Not applicable')
+
+# Check for derived_ethnicity and derived_race also
