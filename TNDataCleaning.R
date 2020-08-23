@@ -60,7 +60,7 @@ TN2019 <- subset(TN2019, applicant_ethnicity_1!='')
 # purchaser is not a 'natural person' or the info was not reported by
 # the loan originator, cannot use these for bias analysis
 TN2019 <- subset(TN2019, applicant_ethnicity_1 != 4)
-TN2019 <- subset(TN2019, Applicant_Sex != 'Not applicable')  # code = 4
+TN2019 <- subset(TN2019, applicant_sex != 4)  # code = 4
 TN2019 <- subset(TN2019, applicant_race_1 != 7)
 
 # remove rows with NAs for county and census tract
@@ -89,7 +89,7 @@ convert_purchaser <- function(purchaser_type){
 }
 TN2019$Purchaser_Type <- sapply(TN2019$purchaser_type,convert_purchaser)
 TN2019$Purchaser_Type<- as.factor(TN2019$Purchaser_Type)
-# drop action_taken (lower case) column 
+# drop purchaser_type (lower case) column 
 TN2019 <- subset(TN2019, select= -purchaser_type)
 
 ##########################################################################
@@ -104,7 +104,7 @@ convert_loan_purpose <- function(loan_purpose){
 }
 TN2019$Loan_Purpose <- sapply(TN2019$loan_purpose,convert_loan_purpose)
 TN2019$Loan_Purpose <- as.factor(TN2019$Loan_Purpose)
-# drop action_taken (lower case) column 
+# drop loan_purpose (lower case) column 
 TN2019 <- subset(TN2019, select= -loan_purpose)
 
 ##########################################################################
@@ -115,7 +115,7 @@ convert_preapproval<- function(preapproval){
 }
 TN2019$Preapproval <- sapply(TN2019$preapproval,convert_preapproval)
 TN2019$Preapproval <- as.factor(TN2019$Preapproval)
-# drop action_taken (lower case) column 
+# drop preapproval (lower case) column 
 TN2019 <- subset(TN2019, select= -preapproval)
 
 ##########################################################################
@@ -250,7 +250,7 @@ convert_applicant_sex_observed <- function(applicant_sex_observed){
   else if (applicant_sex_observed == 2){  return('Not collected on the basis of visual observation or surname')  }
   else if (applicant_sex_observed == 3){  return('Not applicable')  }
 }
-TN2019$Applicant_Sex_Observed <- sapply(TN2019$applicant_sex_observed,convert_applicant_sex)
+TN2019$Applicant_Sex_Observed <- sapply(TN2019$applicant_sex_observed,convert_applicant_sex_observed)
 TN2019$Applicant_Sex_Observed <- as.factor(TN2019$Applicant_Sex_Observed)
 # drop applicant_sex_observed (lower case) column 
 TN2019 <- subset(TN2019, select= -applicant_sex_observed)
@@ -263,7 +263,7 @@ convert_co_applicant_sex_observed <- function(co_applicant_sex_observed){
   else if (co_applicant_sex_observed == 3){  return('Not applicable')  }
   else if (co_applicant_sex_observed == 4){  return('No co-applicant')  }
 }
-TN2019$Co_Applicant_Sex_Observed <- sapply(TN2019$co_applicant_sex_observed,convert_co_applicant_sex)
+TN2019$Co_Applicant_Sex_Observed <- sapply(TN2019$co_applicant_sex_observed,convert_co_applicant_sex_observed)
 TN2019$Co_Applicant_Sex_Observed <- as.factor(TN2019$Co_Applicant_Sex_Observed)
 # drop co_applicant_sex_observed (lower case) column 
 TN2019 <- subset(TN2019, select= -co_applicant_sex_observed)
@@ -345,4 +345,71 @@ TN2019$Lien_Status <- sapply(TN2019$lien_status,convert_lien_status)
 TN2019$Lien_Status <- as.factor(TN2019$Lien_Status)
 # drop lien_status (lower case) column 
 TN2019 <- subset(TN2019, select= -lien_status)
+
+##########################################################################
+# convert manufactured_home_secured_property_type levels from numbers to descriptives
+convert_manufactured_home_prop_type<- function(manufactured_home_secured_property_type){
+  if (manufactured_home_secured_property_type == 1){  return('Manufactured home and land')  }
+  else if (manufactured_home_secured_property_type == 2){  return('Manufactured home and not land')  }
+  else if (manufactured_home_secured_property_type == 3){  return('Not applicable')  }
+  else if (manufactured_home_secured_property_type == 1111){  return('Exempt')  }
+}
+TN2019$Manufactured_Home_Secured_Property_Type <- sapply(TN2019$manufactured_home_secured_property_type,convert_manufactured_home_prop_type)
+TN2019$Manufactured_Home_Secured_Property_Type <- as.factor(TN2019$Manufactured_Home_Secured_Property_Type)
+# drop manufactured_home_secured_property_type (lower case) column 
+TN2019 <- subset(TN2019, select= -manufactured_home_secured_property_type)
+
+##########################################################################
+# convert manufactured_home_land_property_interest levels from numbers to descriptives
+convert_manufactured_home_land_prop_interest<- function(manufactured_home_land_property_interest){
+  if (manufactured_home_land_property_interest == 1){  return('Direct ownership')  }
+  else if (manufactured_home_land_property_interest == 2){  return('Indirect ownership')  }
+  else if (manufactured_home_land_property_interest == 3){  return('Paid leasehold')  }
+  else if (manufactured_home_land_property_interest == 4){  return('Unpaid leasehold')  }
+  else if (manufactured_home_land_property_interest == 5){  return('Not applicable')  }
+  else if (manufactured_home_land_property_interest == 1111){  return('Exempt')  }
+}
+TN2019$Manufactured_Home_Land_Property_Interest <- sapply(TN2019$manufactured_home_land_property_interest,convert_manufactured_home_land_prop_interest)
+TN2019$Manufactured_Home_Land_Property_Interest <- as.factor(TN2019$Manufactured_Home_Land_Property_Interest)
+# drop manufactured_home_land_property_interest (lower case) column 
+TN2019 <- subset(TN2019, select= -manufactured_home_land_property_interest)
+
+##########################################################################
+# convert applicant_ethnicity_1 levels from numbers to descriptives
+convert_applicant_ethnicity_1<- function(applicant_ethnicity_1){
+  if (applicant_ethnicity_1 == 1){  return('Hispanic or Latino')  }
+  else if (applicant_ethnicity_1 == 11){  return('Mexican')  }
+  else if (applicant_ethnicity_1 == 12){  return('Puerto Rican')  }
+  else if (applicant_ethnicity_1 == 13){  return('Cuban')  }
+  else if (applicant_ethnicity_1 == 14){  return('Other Hispanic or Latino')  }
+  else if (applicant_ethnicity_1 == 2){  return('Not Hispanic or Latino')  }
+  else if (applicant_ethnicity_1 == 3){  return('Information not provided by applicant in mail, internet, or telephone application')  }
+  else if (applicant_ethnicity_1 == 4){  return('Not applicable')  }
+}
+TN2019$Applicant_Ethnicity_1 <- sapply(TN2019$applicant_ethnicity_1,convert_applicant_ethnicity_1)
+TN2019$Applicant_Ethnicity_1 <- as.factor(TN2019$Applicant_Ethnicity_1)
+# drop applicant_ethnicity_1 (lower case) column 
+TN2019 <- subset(TN2019, select= -applicant_ethnicity_1)
+
+##########################################################################
+# convert co_applicant_ethnicity_1 levels from numbers to descriptives
+convert_co_applicant_ethnicity_1<- function(co_applicant_ethnicity_1){
+  if (co_applicant_ethnicity_1 == 1){  return('Hispanic or Latino')  }
+  else if (co_applicant_ethnicity_1 == 11){  return('Mexican')  }
+  else if (co_applicant_ethnicity_1 == 12){  return('Puerto Rican')  }
+  else if (co_applicant_ethnicity_1 == 13){  return('Cuban')  }
+  else if (co_applicant_ethnicity_1 == 14){  return('Other Hispanic or Latino')  }
+  else if (co_applicant_ethnicity_1 == 2){  return('Not Hispanic or Latino')  }
+  else if (co_applicant_ethnicity_1 == 3){  return('Information not provided by applicant in mail, internet, or telephone application')  }
+  else if (co_applicant_ethnicity_1 == 4){  return('Not applicable')  }
+  else if (co_applicant_ethnicity_1 == 5){  return('No co-applicant')  }
+}
+TN2019$Co_Applicant_Ethnicity_1 <- sapply(TN2019$co_applicant_ethnicity_1,convert_co_applicant_ethnicity_1)
+TN2019$Co_Applicant_Ethnicity_1 <- as.factor(TN2019$Co_Applicant_Ethnicity_1)
+# drop co_applicant_ethnicity_1 (lower case) column 
+TN2019 <- subset(TN2019, select= -co_applicant_ethnicity_1)
+
+
+
+
 
