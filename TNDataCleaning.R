@@ -10,27 +10,40 @@ TN2019 <- subset(X2019publicTN_allColumns, select=-activity_year)
 TN2019 <- subset(TN2019, select=-state_code)
 
 # remove columns with duplicated age information
+# use applicant_age and co_applicant_age columns
 TN2019 <- subset(TN2019, select=-applicant_age_above_62)
 TN2019 <- subset(TN2019, select=-co_applicant_age_above_62)
 
-# remove rows with action_taken in (4,5,6)
-# action_taken = 4 (application withdrawn)
-# action_taken = 5 (application closed as incomplete)
-# action_taken = 6 (purchased loan, meaning an entity purchased the loan)
-TN2019 <- subset(TN2019, action_taken!=4)
-TN2019 <- subset(TN2019, action_taken!=5)
-TN2019 <- subset(TN2019, action_taken!=6)
+# remove columns that are covered in 'derived' columns
+# derived_loan_product_type
+TN2019 <- subset(TN2019, select=-loan_type)
+TN2019 <- subset(TN2019, select=-lien_status)
+# derived_dwelling_category
+TN2019 <- subset(TN2019, select=-construction_method)
+TN2019 <- subset(TN2019, select=-total_units)
+
+#############################################################
+# subset the demographics columns for summary statistics
+TN2019_gender <- subset(TN2019, select =c('derived_sex', 'applicant_sex', 
+      'co_applicant_sex', 'applicant_sex_observed', 'co_applicant_sex_observed'))
+describe(TN2019_gender)
+
+TN2019_race <- subset(TN2019, select = c('derived_race', 'applicant_race_1',
+      'applicant_race_2', 'applicant_race_3', 'applicant_race_4', 'applicant_race_5',
+      'applicant_race_observed', 'co_applicant_race_1', 'co_applicant_race_2', 
+      'co_applicant_race_3', 'co_applicant_race_4', 'co_applicant_race_5',
+      'co_applicant_race_observed'))
+describe(TN2019_race)
+
+TN2019_ethnicity<- subset(TN2019, select =c('derived_ethnicity', 'applicant_ethnicity_1', 
+      'applicant_ethnicity_2', 'applicant_ethnicity_3', 'applicant_ethnicity_4', 
+      'applicant_ethnicity_5', 'applicant_ethnicity_observed', 'co_applicant_ethnicity_1', 
+      'co_applicant_ethnicity_2', 'co_applicant_ethnicity_3', 'co_applicant_ethnicity_4', 
+      'co_applicant_ethnicity_5', 'co_applicant_ethnicity_observed'))
+describe(TN2019_ethnicity)
 
 ##############################################################
-# remove columns with low data density or no data 
-##############################################################
-TN2019 <- subset(TN2019, select=-aus_2)
-TN2019 <- subset(TN2019, select=-aus_3)
-TN2019 <- subset(TN2019, select=-aus_4)
-TN2019 <- subset(TN2019, select=-aus_5)
-TN2019 <- subset(TN2019, select=-denial_reason_2)
-TN2019 <- subset(TN2019, select=-denial_reason_3)
-TN2019 <- subset(TN2019, select=-denial_reason_4)
+# remove columns for demographics with low data density or no data 
 TN2019 <- subset(TN2019, select=-co_applicant_race_2)
 TN2019 <- subset(TN2019, select=-co_applicant_race_3)
 TN2019 <- subset(TN2019, select=-co_applicant_race_4)
@@ -48,8 +61,22 @@ TN2019 <- subset(TN2019, select=-applicant_ethnicity_3)
 TN2019 <- subset(TN2019, select=-applicant_ethnicity_4)
 TN2019 <- subset(TN2019, select=-applicant_ethnicity_5)
 
+                                        
+
+
+
+# remove rows with action_taken in (4,5,6)
+# action_taken = 4 (application withdrawn)
+# action_taken = 5 (application closed as incomplete)
+# action_taken = 6 (purchased loan, meaning an entity purchased the loan)
+TN2019 <- subset(TN2019, action_taken!=4)
+TN2019 <- subset(TN2019, action_taken!=5)
+TN2019 <- subset(TN2019, action_taken!=6)
+
+
+
 ##############################################################
-# remove rows with NAs 
+# remove rows with missing values
 ##############################################################
 TN2019 <- subset(TN2019, co_applicant_race_1!='')
 TN2019 <- subset(TN2019, applicant_race_1!='')
@@ -77,10 +104,16 @@ TN2019 <- subset(TN2019, county_code!='')
 TN2019 <- subset(TN2019, census_tract!='') 
 
 # remove rows with 
+TN2019 <- subset(TN2019, applicant_age!='8888')
+TN2019 <- subset(TN2019, co_applicant_age!='8888')
 
-TN2019 <- subset(TN2019_remove_rows, applicant_age!='8888')
-
-
+TN2019 <- subset(TN2019, select=-aus_2)
+TN2019 <- subset(TN2019, select=-aus_3)
+TN2019 <- subset(TN2019, select=-aus_4)
+TN2019 <- subset(TN2019, select=-aus_5)
+TN2019 <- subset(TN2019, select=-denial_reason_2)
+TN2019 <- subset(TN2019, select=-denial_reason_3)
+TN2019 <- subset(TN2019, select=-denial_reason_4)
 
 ####################################################################
 # convert levels with numeric representation to descriptives
@@ -294,17 +327,6 @@ TN2019$Occupancy_Type <- as.factor(TN2019$Occupancy_Type)
 TN2019 <- subset(TN2019, select= -occupancy_type)
 
 ##########################################################################
-# convert construction_method levels from numbers to descriptives
-convert_construction_method <- function(construction_method){
-  if (construction_method == 1){  return('Site-built')  }
-  else if (construction_method == 2){  return('Manufactured home')  }
-}
-TN2019$Construction_Method <- sapply(TN2019$construction_method,convert_construction_method)
-TN2019$Construction_Method <- as.factor(TN2019$Construction_Method)
-# drop construction_method (lower case) column 
-TN2019 <- subset(TN2019, select= -construction_method)
-
-##########################################################################
 # convert action_taken levels from numbers to descriptives
 convert_action_taken_descr <- function(action_taken){
   if (action_taken == 1){  return('Loan originated')  }
@@ -334,30 +356,6 @@ TN2019$Application_Status <- sapply(TN2019$action_taken,convert_application_stat
 TN2019$Application_Status <- as.factor(TN2019$Application_Status)
 # drop action_taken (lower case) column 
 TN2019 <- subset(TN2019, select= -action_taken)
-
-##########################################################################
-# convert loan_type levels from numbers to descriptives
-convert_loan_type<- function(loan_type){
-  if (loan_type == 1){  return('Conventional (not insured or guaranteed by FHA, VA, RHS, or FSA)')  }
-  else if (loan_type == 2){  return('Federal Housing Administration insured (FHA)')  }
-  else if (loan_type == 3){  return('Veterans Affairs guaranteed (VA)')  }
-  else if (loan_type == 4){  return('USDA Rural Housing Service or Farm Service Agency guaranteed (RHS or FSA)')  }
-}
-TN2019$Loan_Type <- sapply(TN2019$loan_type,convert_loan_type)
-TN2019$Loan_Type <- as.factor(TN2019$Loan_Type)
-# drop loan_type (lower case) column 
-TN2019 <- subset(TN2019, select= -loan_type)
-
-##########################################################################
-# convert lien_status levels from numbers to descriptives
-convert_lien_status<- function(lien_status){
-  if (lien_status == 1){  return('Secured by a first lien')  }
-  else if (lien_status == 2){  return('Secured by a subordinate lien')  }
-}
-TN2019$Lien_Status <- sapply(TN2019$lien_status,convert_lien_status)
-TN2019$Lien_Status <- as.factor(TN2019$Lien_Status)
-# drop lien_status (lower case) column 
-TN2019 <- subset(TN2019, select= -lien_status)
 
 ##########################################################################
 # convert manufactured_home_secured_property_type levels from numbers to descriptives
@@ -627,3 +625,18 @@ TN2019$Co_Applicant_Credit_Score_Type <- sapply(TN2019$co_applicant_credit_score
 TN2019$Co_Applicant_Credit_Score_Type <- as.factor(TN2019$Co_Applicant_Credit_Score_Type)
 # drop co_applicant_credit_score_type (lower case) column 
 TN2019 <- subset(TN2019, select= -co_applicant_credit_score_type)
+
+######################################################
+# check the 'observed' columns for information 
+
+TN2019_gender <- subset(TN2019, select =c('Application_Status', 'derived_sex', 'Applicant_Sex',
+                                          'Applicant_Sex_Observed', 'Co_Applicant_Sex','Co_Applicant_Sex_Observed'))
+TN2019_race <- subset(TN2019, select = c('Application_Status', 'derived_race', 'Applicant_Race_1',
+                                         'Applicant_Race_Observed', 'Co_Applicant_Race_1', 'Co_Applicant_Race_Observed'))
+TN2019_ethnicity<- subset(TN2019, select =c('Application_Status', 'derived_ethnicity', 'Applicant_Ethnicity_1', 
+                                            'Applicant_Ethnicity_Observed', 'Co_Applicant_Ethnicity_1', 'Co_Applicant_Ethnicity_Observed'))
+
+# remove 'observed' columns as unneeded information
+TN2019 <- subset(TN2019, select=-Applicant_Sex_Observed)
+TN2019 <- subset(TN2019, select=-Applicant_Race_Observed)
+TN2019 <- subset(TN2019, select=-Applicant_Ethnicity_Observed)
