@@ -3,6 +3,7 @@ write.csv(TN2019, "TN2019_v1.csv", row.names = FALSE)
 write.csv(TN2019_gender, "TN2019_gender.csv", row.names = FALSE)
 write.csv(TN2019_race, "TN2019_race.csv", row.names = FALSE)
 write.csv(TN2019_ethnicity, "TN2019_ethnicity.csv", row.names = FALSE)
+write.csv(TN2019_main, "TN2019_main.csv", row.names = FALSE)
 
 contents(TN2019)
 

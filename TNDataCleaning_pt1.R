@@ -73,6 +73,20 @@ TN2019 <- subset(TN2019, select=-aus_5)
 TN2019 <- subset(TN2019, select=-denial_reason_2)
 TN2019 <- subset(TN2019, select=-denial_reason_3)
 TN2019 <- subset(TN2019, select=-denial_reason_4)
+TN2019 <- subset(TN2019, select=-multifamily_affordable_units)
+
+# removed columns with data only relevant to approved and accepted applications
+TN2019 <- subset(TN2019, select=-total_points_and_fees)
+TN2019 <- subset(TN2019, select=-interest_rate)
+TN2019 <- subset(TN2019, select=-rate_spread)
+TN2019 <- subset(TN2019, select=-total_loan_costs)
+TN2019 <- subset(TN2019, select=-origination_charges)
+TN2019 <- subset(TN2019, select=-discount_points)
+TN2019 <- subset(TN2019, select=-lender_credits)
+TN2019 <- subset(TN2019, select=-intro_rate_period)
+TN2019 <- subset(TN2019, select=-prepayment_penalty_term)
+                                      
+
 
 # remove rows with NAs for county and census tract
 TN2019 <- subset(TN2019, county_code!='')

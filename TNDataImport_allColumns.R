@@ -1,7 +1,7 @@
 library(readr)
 
-states <- read_csv("2019publiclarcsv.csv",col_types = cols_only(state_code = col_factor()))  # import just the state_code column
-table(states$state_code)  # to see the number of records by state code
+#states <- read_csv("2019publiclarcsv.csv",col_types = cols_only(state_code = col_factor()))  # import just the state_code column
+#table(states$state_code)  # to see the number of records by state code
 
 X2019publicTN_allColumns <- read_csv("X2019publicTN_allColumns.csv", #n_max= 30000,
   col_types = cols(

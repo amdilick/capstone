@@ -287,3 +287,7 @@ TN2019 <- subset(TN2019, select= -co_applicant_credit_score_type)
 
 # remove all rows where purchaser_type != 'Not applicable' (meaning purchaser was not an institution or other non-human)
 TN2019 <- subset(TN2019, Purchaser_Type == 'Not applicable' )
+
+# remove rows where income is NA
+TN2019 <- subset(TN2019, income!='')
+
