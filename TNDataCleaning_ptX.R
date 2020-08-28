@@ -264,25 +264,7 @@ TN2019$Applicant_Credit_Score_Type <- as.factor(TN2019$Applicant_Credit_Score_Ty
 # drop applicant_credit_score_type (lower case) column 
 TN2019 <- subset(TN2019, select= -applicant_credit_score_type)
 
-##########################################################################
-# convert co_applicant_credit_score_type levels from numbers to descriptives
-convert_co_applicant_credit_score_type<- function(co_applicant_credit_score_type){
-  if (co_applicant_credit_score_type == 1){  return('Equifax Beacon 5.0')  }
-  else if (co_applicant_credit_score_type == 2){  return('Experian Fair Isaac')  }
-  else if (co_applicant_credit_score_type == 3){  return('FICO Risk Score Classic 04')  }
-  else if (co_applicant_credit_score_type == 4){  return('FICO Risk Score Classic 98')  }
-  else if (co_applicant_credit_score_type == 5){  return('VantageScore 2.0')  }
-  else if (co_applicant_credit_score_type == 6){  return('VantageScore 3.0')  }
-  else if (co_applicant_credit_score_type == 7){  return('More than one credit scoring model')  }
-  else if (co_applicant_credit_score_type == 8){  return('Other credit scoring model')  }
-  else if (co_applicant_credit_score_type == 9){  return('Not applicable')  }
-  else if (co_applicant_credit_score_type == 10){  return('No co-applicant')  }
-  else if (co_applicant_credit_score_type == 1111){  return('Exempt')  }
-}
-TN2019$Co_Applicant_Credit_Score_Type <- sapply(TN2019$co_applicant_credit_score_type,convert_co_applicant_credit_score_type)
-TN2019$Co_Applicant_Credit_Score_Type <- as.factor(TN2019$Co_Applicant_Credit_Score_Type)
-# drop co_applicant_credit_score_type (lower case) column 
-TN2019 <- subset(TN2019, select= -co_applicant_credit_score_type)
+
 
 
 # remove all rows where purchaser_type != 'Not applicable' (meaning purchaser was not an institution or other non-human)
@@ -290,4 +272,7 @@ TN2019 <- subset(TN2019, Purchaser_Type == 'Not applicable' )
 
 # remove rows where income is NA
 TN2019 <- subset(TN2019, income!='')
+
+# remove rows where occupancy type is not "principal residence"
+TN2019 <- subset(TN2019, Occupancy_Type=='Principal residence')
 

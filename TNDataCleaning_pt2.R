@@ -27,22 +27,22 @@ TN2019 <- subset(TN2019, select= -action_taken)
 
 ####################################################################
 ####################################################################
-# 'Not applicable' values in race, ethnicity, sex columns indicate 
+# 'Not applicable' values in race, ethnicity, sex columns indicate  
 # purchaser is not a 'natural person' or the info was not reported by
 # the loan originator, cannot use these for bias analysis
 TN2019 <- subset(TN2019, applicant_ethnicity_1 != 4)
 TN2019 <- subset(TN2019, applicant_sex != 4)  
 TN2019 <- subset(TN2019, applicant_race_1 != 7)
 TN2019 <- subset(TN2019, applicant_age!='8888')
-TN2019 <- subset(TN2019, co_applicant_age!='8888')
+
 
 # remove rows in race, ethnicity, sex info columns 
 # with codes that indicate information was not provided by the applicant
 TN2019 <- subset(TN2019, applicant_ethnicity_1 != 3)
 TN2019 <- subset(TN2019, applicant_sex != 3)  
 TN2019 <- subset(TN2019, applicant_race_1 != 6)
-TN2019 <- subset(TN2019, co_applicant_ethnicity_1 != 3)
-TN2019 <- subset(TN2019, co_applicant_sex != 3)  
-TN2019 <- subset(TN2019, co_applicant_race_1 != 6)
 
-# Ending info: row count = 226911, col count = 68
+# remove rows where loan purpose is primarily business purpose  
+TN2019 <- subset(TN2019, business_or_commercial_purpose == 2)
+
+# Ending info: row count = 212541,  col count = 47

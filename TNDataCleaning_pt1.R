@@ -59,10 +59,15 @@ TN2019 <- subset(TN2019, select=-applicant_ethnicity_3)
 TN2019 <- subset(TN2019, select=-applicant_ethnicity_4)
 TN2019 <- subset(TN2019, select=-applicant_ethnicity_5)
 
+# remove remaining co_applicant columns
+TN2019 <- subset(TN2019, select=-co_applicant_race_1)
+TN2019 <- subset(TN2019, select=-co_applicant_ethnicity_1)
+TN2019 <- subset(TN2019, select=-co_applicant_age)
+TN2019 <- subset(TN2019, select=-co_applicant_sex)
+TN2019 <- subset(TN2019, select=-co_applicant_credit_score_type)
+
 # remove rows for demographics with missing values
-TN2019 <- subset(TN2019, co_applicant_race_1!='')
 TN2019 <- subset(TN2019, applicant_race_1!='')
-TN2019 <- subset(TN2019, co_applicant_ethnicity_1!='')
 TN2019 <- subset(TN2019, applicant_ethnicity_1!='')
 
 # remove other columns with low data density
@@ -86,11 +91,18 @@ TN2019 <- subset(TN2019, select=-lender_credits)
 TN2019 <- subset(TN2019, select=-intro_rate_period)
 TN2019 <- subset(TN2019, select=-prepayment_penalty_term)
                                       
+# remove columns with 'observed' data - not relevant info
+TN2019 <- subset(TN2019, select=-applicant_ethnicity_observed)
+TN2019 <- subset(TN2019, select=-co_applicant_ethnicity_observed)
+TN2019 <- subset(TN2019, select=-applicant_race_observed)
+TN2019 <- subset(TN2019, select=-co_applicant_race_observed)
+TN2019 <- subset(TN2019, select=-applicant_sex_observed)
+TN2019 <- subset(TN2019, select=-co_applicant_sex_observed)
 
 
 # remove rows with NAs for county and census tract
 TN2019 <- subset(TN2019, county_code!='')
 TN2019 <- subset(TN2019, census_tract!='') 
 
-# Ending info: row count = 382444, col count = 68
+# Ending info: row count = 382460, col count = 47
 
