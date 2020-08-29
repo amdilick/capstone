@@ -6,22 +6,26 @@ TN2019_main <- subset(TN2019, select = c('Application_Status', 'derived_race',
 
 TN2019_main_2 <- subset(TN2019_main, select =-property_value)
 
-TN2019_X2 <- chiSquare(TN2019$Application_Status ~ TN2019$derived_race + 
-       TN2019$derived_ethnicity + TN2019$derived_sex + TN2019$applicant_age +
-       TN2019$Applicant_Sex +  TN2019$Occupancy_Type +
-       TN2019$Loan_Purpose +  
-      TN2019$Applicant_Credit_Score_Type )
+TN2019_X2 <- chiSquare(TN2019$Application_Status ~ TN2019$derived_msa_md +
+      TN2019$derived_loan_product_type + TN2019$derived_dwelling_category +
+      TN2019$derived_ethnicity + TN2019$derived_race + TN2019$derived_sex +
+      TN2019$Occupancy_Type + TN2019$applicant_age + TN2019$Applicant_Sex +
+      TN2019$Loan_Purpose + TN2019$Preapproval + TN2019$AUS_1 + 
+      TN2019$Applicant_Credit_Score_Type)
 print(TN2019_X2)
-plot(chiSquare(TN2019$Application_Status ~ TN2019$derived_race + 
-                 TN2019$derived_ethnicity + TN2019$derived_sex + TN2019$applicant_age +
-                 TN2019$Applicant_Sex +  TN2019$Occupancy_Type +
-                 TN2019$Loan_Purpose +  
-                 TN2019$Applicant_Credit_Score_Type ))
+plot(chiSquare(TN2019$Application_Status ~ TN2019$derived_msa_md +
+                  TN2019$derived_loan_product_type + TN2019$derived_dwelling_category +
+                  TN2019$derived_ethnicity + TN2019$derived_race + TN2019$derived_sex +
+                  TN2019$Occupancy_Type + TN2019$applicant_age + TN2019$Applicant_Sex +
+                  TN2019$Loan_Purpose + TN2019$Preapproval +  
+                  TN2019$Applicant_Credit_Score_Type))
 
 #TN2019_Xval <- subset(TN2019_main, select=-property_value)
-TN2019_Xval <- subset(TN2019_main, select=-Application_Status)
+TN2019_Xval <- subset(TN2019_reg, select=-Application_Status)
+TN2019_Xval <- subset(TN2019_Xval, select=-AUS_1)
 
-
+library(FactoMineR)
+library(factoextra)
 TN.famd <- FAMD(TN2019_Xval, graph = FALSE)
 fviz_screeplot(TN.famd)
 var <- get_famd_var(TN.famd)
