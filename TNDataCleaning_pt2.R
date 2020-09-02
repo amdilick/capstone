@@ -6,6 +6,7 @@
 
 library(Hmisc)
 describe(TN2019)
+TN2019 <- TN2019_init
 
 # remove rows for demographics with missing values
 TN2019 <- subset(TN2019, applicant_race_1!='')
@@ -24,6 +25,7 @@ TN2019 <- subset(TN2019, applicant_age!='8888')
 TN2019 <- subset(TN2019, applicant_ethnicity_1 != 3)
 TN2019 <- subset(TN2019, applicant_sex != 3)  
 TN2019 <- subset(TN2019, applicant_race_1 != 6)
+
 
 
 ####################################################################
@@ -111,7 +113,7 @@ TN2019 <- subset(TN2019, select= -purchaser_type)
 # see 2019guide.pdf pg.61 for reference
 TN2019 <- subset(TN2019, Purchaser_Type == 'Not applicable' )
 
-#######################################################################################
+f#######################################################################################
 
 # map action_taken levels to application_status
 convert_action_taken <- function(action_taken){
@@ -134,6 +136,9 @@ TN2019 <- subset(TN2019, select= -action_taken)
 TN2019 <- subset(TN2019, Action_Taken!='Purchased loan')
 TN2019 <- subset(TN2019, Action_Taken!='Application withdawn by applicant')
 TN2019 <- subset(TN2019, Action_Taken!='File closed for incompleteness')
+# removed unused levels from the factor column
+TN2019$Action_Taken <- factor(TN2019$Action_Taken)
+
 
 # remove Purchaser_Type column, all values are the same in the column
 TN2019 <- subset(TN2019, select=-Purchaser_Type)

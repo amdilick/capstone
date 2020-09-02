@@ -55,14 +55,6 @@ TN2019_init <- subset(TN2019_init, select=-aus_5)
 TN2019_init <- subset(TN2019_init, select=-denial_reason_2)
 TN2019_init <- subset(TN2019_init, select=-denial_reason_3)
 TN2019_init <- subset(TN2019_init, select=-denial_reason_4)
-TN2019_init <- subset(TN2019_init, select=-multifamily_affordable_units)
-
-# remove remaining co_applicant columns
-TN2019_init <- subset(TN2019_init, select=-co_applicant_race_1)
-TN2019_init <- subset(TN2019_init, select=-co_applicant_ethnicity_1)
-TN2019_init <- subset(TN2019_init, select=-co_applicant_age)
-TN2019_init <- subset(TN2019_init, select=-co_applicant_sex)
-TN2019_init <- subset(TN2019_init, select=-co_applicant_credit_score_type)
 
 # remove columns with 'observed' data - not relevant info
 TN2019_init <- subset(TN2019_init, select=-applicant_ethnicity_observed)
@@ -76,5 +68,22 @@ TN2019_init <- subset(TN2019_init, select=-co_applicant_sex_observed)
 TN2019_init <- subset(TN2019_init, select=-conforming_loan_limit)
 TN2019_init <- subset(TN2019_init, select=-lei)
 
-# Ending info: row count = 389728, col count = 52
+describe(TN2019_init)
+# remove remaining co_applicant columns
+TN2019_init <- subset(TN2019_init, select=-co_applicant_race_1)
+TN2019_init <- subset(TN2019_init, select=-co_applicant_ethnicity_1)
+TN2019_init <- subset(TN2019_init, select=-co_applicant_age)
+TN2019_init <- subset(TN2019_init, select=-co_applicant_sex)
+TN2019_init <- subset(TN2019_init, select=-co_applicant_credit_score_type)
+
+# row count = 389728, col count = 47
+contents(TN2019_init)
+# remove columns w/ data for approved apps and NA in rows for denied apps
+TN2019_init <- subset(TN2019_init, select=-combined_loan_to_value_ratio)
+TN2019_init <- subset(TN2019_init, select=-interest_rate)
+TN2019_init <- subset(TN2019_init, select=-rate_spread)
+TN2019_init <- subset(TN2019_init, select=-total_loan_costs)
+TN2019_init <- subset(TN2019_init, select=-origination_charges)
+TN2019_init <- subset(TN2019_init, select=-debt_to_income_ratio)
+
 
