@@ -5,26 +5,19 @@
 # Beginning info: row count = 382444, col count = 68
 
 library(Hmisc)
-describe(TN2019)
-TN2019 <- TN2019_init
+describe(TN2019_reg)
 
-# remove rows for demographics with missing values
-TN2019 <- subset(TN2019, applicant_race_1!='')
-TN2019 <- subset(TN2019, applicant_ethnicity_1!='')
+# remove columns w/ data for approved apps and NA in rows for denied apps
+TN2019_reg <- subset(TN2019_reg, select=-combined_loan_to_value_ratio)
+TN2019_reg <- subset(TN2019_reg, select=-interest_rate)
+TN2019_reg <- subset(TN2019_reg, select=-rate_spread)
+TN2019_reg <- subset(TN2019_reg, select=-total_loan_costs)
+TN2019_reg <- subset(TN2019_reg, select=-origination_charges)
+TN2019_reg <- subset(TN2019_reg, select=-debt_to_income_ratio)
 
-# 'Not applicable' values in race, ethnicity, sex columns indicate  
-# purchaser is not a 'natural person' or the info was not reported by
-# the loan originator, cannot use these for bias analysis
-TN2019 <- subset(TN2019, applicant_ethnicity_1 != 4)
-TN2019 <- subset(TN2019, applicant_sex != 4)  
-TN2019 <- subset(TN2019, applicant_race_1 != 7)
-TN2019 <- subset(TN2019, applicant_age!='8888')
 
-# remove rows in race, ethnicity, sex info columns 
-# with codes that indicate information was not provided by the applicant
-TN2019 <- subset(TN2019, applicant_ethnicity_1 != 3)
-TN2019 <- subset(TN2019, applicant_sex != 3)  
-TN2019 <- subset(TN2019, applicant_race_1 != 6)
+
+
 
 
 
