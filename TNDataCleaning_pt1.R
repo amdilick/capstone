@@ -457,6 +457,15 @@ TN2019_init <- subset(TN2019_init, select= -applicant_credit_score_type)
 describe(TN2019_init)
 # remove Purchaser_Type column, all values are the same in the column
 TN2019_init <- subset(TN2019_init, select=-Purchaser_Type)
+
+
+TN2019_init <- subset(TN2019_init, Business_or_Commercial_Purpose == 'Not primarily for a business or commercial purpose')
+TN2019_init <- subset(TN2019_init, select=-Business_or_Commercial_Purpose)
+TN2019_init <- subset(TN2019_init, income !='')
+TN2019_init <- subset(TN2019_init, income !='Exempt')
+TN2019_init <- subset(TN2019_init, Occupancy_Type=='Principal residence')
+TN2019_init <- subset(TN2019_init, select=-Occupancy_Type)
+TN2019_init <- subset(TN2019_init, property_value!='Exempt')
 ################################################################################
 TN2019_approved <- TN2019_init
 TN2019_reg <- TN2019_init

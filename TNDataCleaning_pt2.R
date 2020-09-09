@@ -2,7 +2,7 @@
 # Demographics:  remove rows, convert numeric levels to descriptives
 # only keep loans originated and not sold
 # only keep approved/denied applications, not incomplete or withdrawn
-# Beginning info: row count = 382444, col count = 68
+# Beginning info: row count = 162454, col count = 46
 
 library(Hmisc)
 describe(TN2019_reg)
@@ -15,6 +15,7 @@ TN2019_reg <- subset(TN2019_reg, select=-total_loan_costs)
 TN2019_reg <- subset(TN2019_reg, select=-origination_charges)
 TN2019_reg <- subset(TN2019_reg, select=-debt_to_income_ratio)
 
+# remove columns w/
 
 
 
