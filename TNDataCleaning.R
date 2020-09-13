@@ -3,65 +3,205 @@
 
 # Get info about the TN Dataset
 library(Hmisc)
+contents(X2019publicTN_allColumns)
 describe(X2019publicTN_allColumns)
+summary(X2019publicTN_allColumns)
 
 # remove columns that have info we don't need
-TN2019 <- subset(X2019publicTN_allColumns, select=-activity_year)
-TN2019 <- subset(TN2019, select=-state_code)
+TN2019_init <- subset(X2019publicTN_allColumns, select=-activity_year)
+TN2019_init <- subset(TN2019_init, select=-state_code)
+
+# remove columns with low data density or no data 
+TN2019_init <- subset(TN2019_init, select=-total_points_and_fees)
+TN2019_init <- subset(TN2019_init, select=-discount_points)
+TN2019_init <- subset(TN2019_init, select=-lender_credits)
+TN2019_init <- subset(TN2019_init, select=-prepayment_penalty_term)
+TN2019_init <- subset(TN2019_init, select=-intro_rate_period)
+TN2019_init <- subset(TN2019_init, select=-multifamily_affordable_units)
+TN2019_init <- subset(TN2019_init, select=-applicant_ethnicity_2)
+TN2019_init <- subset(TN2019_init, select=-applicant_ethnicity_3)
+TN2019_init <- subset(TN2019_init, select=-applicant_ethnicity_4)
+TN2019_init <- subset(TN2019_init, select=-applicant_ethnicity_5)
+TN2019_init <- subset(TN2019_init, select=-co_applicant_ethnicity_2)
+TN2019_init <- subset(TN2019_init, select=-co_applicant_ethnicity_3)
+TN2019_init <- subset(TN2019_init, select=-co_applicant_ethnicity_4)
+TN2019_init <- subset(TN2019_init, select=-co_applicant_ethnicity_5)
+TN2019_init <- subset(TN2019_init, select=-applicant_race_2)
+TN2019_init <- subset(TN2019_init, select=-applicant_race_3)
+TN2019_init <- subset(TN2019_init, select=-applicant_race_4)
+TN2019_init <- subset(TN2019_init, select=-applicant_race_5)
+TN2019_init <- subset(TN2019_init, select=-co_applicant_race_2)
+TN2019_init <- subset(TN2019_init, select=-co_applicant_race_3)
+TN2019_init <- subset(TN2019_init, select=-co_applicant_race_4)
+TN2019_init <- subset(TN2019_init, select=-co_applicant_race_5)
+TN2019_init <- subset(TN2019_init, select=-aus_2)
+TN2019_init <- subset(TN2019_init, select=-aus_3)
+TN2019_init <- subset(TN2019_init, select=-aus_4)
+TN2019_init <- subset(TN2019_init, select=-aus_5)
+TN2019_init <- subset(TN2019_init, select=-denial_reason_2)
+TN2019_init <- subset(TN2019_init, select=-denial_reason_3)
+TN2019_init <- subset(TN2019_init, select=-denial_reason_4)
 
 # remove columns with duplicated age information
 # use applicant_age and co_applicant_age columns
-TN2019 <- subset(TN2019, select=-applicant_age_above_62)
-TN2019 <- subset(TN2019, select=-co_applicant_age_above_62)
+TN2019_init <- subset(TN2019_init, select=-applicant_age_above_62)
+TN2019_init <- subset(TN2019_init, select=-co_applicant_age_above_62)
 
 # remove columns that are covered in 'derived' columns
 # derived_loan_product_type
-TN2019 <- subset(TN2019, select=-loan_type)
-TN2019 <- subset(TN2019, select=-lien_status)
+TN2019_init <- subset(TN2019_init, select=-loan_type)
+TN2019_init <- subset(TN2019_init, select=-lien_status)
 # derived_dwelling_category
-TN2019 <- subset(TN2019, select=-construction_method)
-TN2019 <- subset(TN2019, select=-total_units)
+TN2019_init <- subset(TN2019_init, select=-construction_method)
+TN2019_init <- subset(TN2019_init, select=-total_units)
+
+##########################################################
+# begin evaluation of the race, ethnicity, sex columns  ##
+##########################################################
+# 'Not applicable' values in race, ethnicity, sex columns indicate  
+# purchaser is not a 'natural person' or the info was not reported by
+# the loan originator, cannot use these for bias analysis
+
+# remove records for purchased loans, and those that were neither approved nor denied
+TN2019_init <- subset(TN2019_init, action_taken != 6)  # purchased loan
+TN2019_init <- subset(TN2019_init, action_taken != 5)  # file closed for incompleteness
+TN2019_init <- subset(TN2019_init, action_taken != 4)  # application withdrawn by applicant
+
+
+TN2019_init <- subset(TN2019_init, applicant_ethnicity_1 != 4) # Not applicable
+TN2019_init <- subset(TN2019_init, applicant_ethnicity_1 != 3) # info not provided by applicant 
+TN2019_init <- subset(TN2019_init, applicant_sex != 4)  # Not applicable
+TN2019_init <- subset(TN2019_init, applicant_sex != 3)  # info not provided by applicant
+TN2019_init <- subset(TN2019_init, applicant_race_1 != 7)  # Not applicable
+TN2019_init <- subset(TN2019_init, applicant_race_1 != 6)  # info not provided by applicant
+
+
+ 
+
+
+
+
+
+
+
+
+# convert applicant_sex levels from numbers to descriptives
+convert_applicant_sex <- function(applicant_sex){
+  if (applicant_sex == 1){  return('Male')  }
+  else if (applicant_sex == 2){  return('Female')  }
+  else if (applicant_sex == 3){  return('Information not provided by applicant')  }
+  else if (applicant_sex == 4){  return('Not applicable')  }
+  else if (applicant_sex == 6){  return('Applicant selected both male and female')  }
+}
+TN2019_init$Applicant_Sex <- sapply(TN2019_init$applicant_sex,convert_applicant_sex)
+TN2019_init$Applicant_Sex <- as.factor(TN2019_init$Applicant_Sex)
+# drop applicant_sex (lower case) column 
+TN2019_init <- subset(TN2019_init, select= -applicant_sex)
+
+# convert co_applicant_sex levels from numbers to descriptives
+convert_co_applicant_sex <- function(co_applicant_sex){
+  if (co_applicant_sex == 1){  return('Male')  }
+  else if (co_applicant_sex == 2){  return('Female')  }
+  else if (co_applicant_sex == 3){  return('Information not provided by applicant')  }
+  else if (co_applicant_sex == 4){  return('Not applicable')  }
+  else if (co_applicant_sex == 5){  return('No co-applicant')  }
+  else if (co_applicant_sex == 6){  return('Co-applicant selected both male and female')  }
+}
+TN2019_init$Co_Applicant_Sex <- sapply(TN2019_init$co_applicant_sex,convert_co_applicant_sex)
+TN2019_init$Co_Applicant_Sex <- as.factor(TN2019_init$Co_Applicant_Sex)
+# drop applicant_sex (lower case) column 
+TN2019_init <- subset(TN2019_init, select= -co_applicant_sex)
+
+
+
+
+
+
+
+##########################################################################
+# convert applicant_ethnicity_1 levels from numbers to descriptives
+convert_applicant_ethnicity_1<- function(applicant_ethnicity_1){
+  if (applicant_ethnicity_1 == 1){  return('Hispanic or Latino')  }
+  else if (applicant_ethnicity_1 == 11){  return('Mexican')  }
+  else if (applicant_ethnicity_1 == 12){  return('Puerto Rican')  }
+  else if (applicant_ethnicity_1 == 13){  return('Cuban')  }
+  else if (applicant_ethnicity_1 == 14){  return('Other Hispanic or Latino')  }
+  else if (applicant_ethnicity_1 == 2){  return('Not Hispanic or Latino')  }
+  else if (applicant_ethnicity_1 == 3){  return('Information not provided by applicant in mail, internet, or telephone application')  }
+  else if (applicant_ethnicity_1 == 4){  return('Not applicable')  }
+}
+TN2019_init$Applicant_Ethnicity_1 <- sapply(TN2019_init$applicant_ethnicity_1,convert_applicant_ethnicity_1)
+TN2019_init$Applicant_Ethnicity_1 <- as.factor(TN2019_init$Applicant_Ethnicity_1)
+# drop applicant_ethnicity_1 (lower case) column 
+TN2019_init <- subset(TN2019_init, select= -applicant_ethnicity_1)
+
+##########################################################################
+# convert applicant_race_1 levels from numbers to descriptives
+convert_applicant_race_1<- function(applicant_race_1){
+  if (applicant_race_1 == 1){  return('American Indian or Alaska Native')  }
+  else if (applicant_race_1 == 2){  return('Asian')  }
+  else if (applicant_race_1 == 21){  return('Asian Indian')  }
+  else if (applicant_race_1 == 22){  return('Chinese')  }
+  else if (applicant_race_1 == 23){  return('Filipino')  }
+  else if (applicant_race_1 == 24){  return('Japanese')  }
+  else if (applicant_race_1 == 25){  return('Korean')  }
+  else if (applicant_race_1 == 26){  return('Vietnamese')  }
+  else if (applicant_race_1 == 27){  return('Other Asian')  }
+  else if (applicant_race_1 == 3){  return('Black or African American')  }
+  else if (applicant_race_1 == 4){  return('Native Hawaiian or Other Pacific Islander')  }
+  else if (applicant_race_1 == 41){  return('Native Hawaiian')  }
+  else if (applicant_race_1 == 42){  return('Guamanian or Chamorro')  }
+  else if (applicant_race_1 == 43){  return('Samoan')  }
+  else if (applicant_race_1 == 44){  return('Other Pacific Islander')  }
+  else if (applicant_race_1 == 5){  return('White')  }
+  else if (applicant_race_1 == 6){  return('Information not provided by applicant in mail, internet, or telephone application')  }
+  else if (applicant_race_1 == 7){  return('Not applicable')  }
+}
+TN2019_init$Applicant_Race_1 <- sapply(TN2019_init$applicant_race_1,convert_applicant_race_1)
+TN2019_init$Applicant_Race_1 <- as.factor(TN2019_init$Applicant_Race_1)
+# drop applicant_race_1 (lower case) column 
+TN2019_init <- subset(TN2019_init, select= -applicant_race_1)
 
 #############################################################
 # subset the demographics columns for summary statistics
-TN2019_gender <- subset(TN2019, select =c('derived_sex', 'applicant_sex', 
-      'co_applicant_sex', 'applicant_sex_observed', 'co_applicant_sex_observed'))
+TN2019_gender <- subset(TN2019_init, select =c('derived_sex', 'Applicant_Sex', 
+      'Co_Applicant_Sex', 'applicant_sex_observed', 'co_applicant_sex_observed'))
 describe(TN2019_gender)
 
-TN2019_race <- subset(TN2019, select = c('derived_race', 'applicant_race_1',
+TN2019_race <- subset(TN2019_init, select = c('derived_race', 'applicant_race_1',
       'applicant_race_2', 'applicant_race_3', 'applicant_race_4', 'applicant_race_5',
       'applicant_race_observed', 'co_applicant_race_1', 'co_applicant_race_2', 
       'co_applicant_race_3', 'co_applicant_race_4', 'co_applicant_race_5',
       'co_applicant_race_observed'))
 describe(TN2019_race)
 
-TN2019_ethnicity<- subset(TN2019, select =c('derived_ethnicity', 'applicant_ethnicity_1', 
+TN2019_ethnicity<- subset(TN2019_init, select =c('derived_ethnicity', 'applicant_ethnicity_1', 
       'applicant_ethnicity_2', 'applicant_ethnicity_3', 'applicant_ethnicity_4', 
       'applicant_ethnicity_5', 'applicant_ethnicity_observed', 'co_applicant_ethnicity_1', 
       'co_applicant_ethnicity_2', 'co_applicant_ethnicity_3', 'co_applicant_ethnicity_4', 
       'co_applicant_ethnicity_5', 'co_applicant_ethnicity_observed'))
 describe(TN2019_ethnicity)
 
-##############################################################
-# remove columns for demographics with low data density or no data 
-TN2019 <- subset(TN2019, select=-co_applicant_race_2)
-TN2019 <- subset(TN2019, select=-co_applicant_race_3)
-TN2019 <- subset(TN2019, select=-co_applicant_race_4)
-TN2019 <- subset(TN2019, select=-co_applicant_race_5)
-TN2019 <- subset(TN2019, select=-applicant_race_2)
-TN2019 <- subset(TN2019, select=-applicant_race_3)
-TN2019 <- subset(TN2019, select=-applicant_race_4)
-TN2019 <- subset(TN2019, select=-applicant_race_5)
-TN2019 <- subset(TN2019, select=-co_applicant_ethnicity_2)
-TN2019 <- subset(TN2019, select=-co_applicant_ethnicity_3)
-TN2019 <- subset(TN2019, select=-co_applicant_ethnicity_4)
-TN2019 <- subset(TN2019, select=-co_applicant_ethnicity_5)
-TN2019 <- subset(TN2019, select=-applicant_ethnicity_2)
-TN2019 <- subset(TN2019, select=-applicant_ethnicity_3)
-TN2019 <- subset(TN2019, select=-applicant_ethnicity_4)
-TN2019 <- subset(TN2019, select=-applicant_ethnicity_5)
 
-                                        
+
+
+
+# remove rows with missing data in race and ethnicity columns
+TN2019 <- subset(TN2019, co_applicant_race_1!='')
+TN2019 <- subset(TN2019, applicant_race_1!='')
+TN2019 <- subset(TN2019, co_applicant_ethnicity_1!='')
+TN2019 <- subset(TN2019, applicant_ethnicity_1!='')
+
+
+
+
+# remove columns with 'observed' data - not relevant info
+TN2019_init <- subset(TN2019_init, select=-applicant_ethnicity_observed)
+TN2019_init <- subset(TN2019_init, select=-co_applicant_ethnicity_observed)
+TN2019_init <- subset(TN2019_init, select=-applicant_race_observed)
+TN2019_init <- subset(TN2019_init, select=-co_applicant_race_observed)
+TN2019_init <- subset(TN2019_init, select=-applicant_sex_observed)
+TN2019_init <- subset(TN2019_init, select=-co_applicant_sex_observed)
 
 
 
