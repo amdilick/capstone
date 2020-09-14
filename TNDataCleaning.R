@@ -282,13 +282,16 @@ TN2019_init$Co_Applicant_Race_Observed <- as.factor(TN2019_init$Co_Applicant_Rac
 # drop applicant_sex (lower case) column 
 TN2019_init <- subset(TN2019_init, select= -co_applicant_race_observed)
 
-#############################################################
+################################################################################
+
 # subset the demographics columns for summary statistics
 TN2019_demographics <- subset(TN2019_init, select =c('derived_sex', 'Applicant_Sex', 'Applicant_Sex_Observed', 
        'Co_Applicant_Sex', 'Co_Applicant_Sex_Observed', 'derived_ethnicity', 'Applicant_Ethnicity_1', 
        'Applicant_Ethnicity_Observed', 'Co_Applicant_Ethnicity_1', 'Co_Applicant_Ethnicity_Observed', 
        'derived_race', 'Applicant_Race_1', 'Applicant_Race_Observed', 'Co_Applicant_Race_1', 'Co_Applicant_Race_Observed'))
 View(TN2019_demographics)
+summary(TN2019_demographics)
+
 describe(TN2019_demographics)
 
 # remove 'observed' columns as they don't provide additional insight
@@ -298,6 +301,16 @@ TN2019_init <- subset(TN2019_init, select = -Applicant_Sex_Observed)
 TN2019_init <- subset(TN2019_init, select = -Co_Applicant_Race_Observed)
 TN2019_init <- subset(TN2019_init, select = -Co_Applicant_Ethnicity_Observed)
 TN2019_init <- subset(TN2019_init, select = -Co_Applicant_Sex_Observed)
+
+################################################################################
+#  STOP HERE FOR NOW
+
+
+
+
+
+
+
 
 
 
@@ -310,19 +323,10 @@ TN2019 <- subset(TN2019, census_tract!='')
 TN2019 <- subset(TN2019, applicant_age!='8888')
 TN2019 <- subset(TN2019, co_applicant_age!='8888')
 
-TN2019 <- subset(TN2019, select=-aus_2)
-TN2019 <- subset(TN2019, select=-aus_3)
-TN2019 <- subset(TN2019, select=-aus_4)
-TN2019 <- subset(TN2019, select=-aus_5)
-TN2019 <- subset(TN2019, select=-denial_reason_2)
-TN2019 <- subset(TN2019, select=-denial_reason_3)
-TN2019 <- subset(TN2019, select=-denial_reason_4)
+################################################################################
+# convert remaining column levels with numeric representation to descriptives
+################################################################################
 
-####################################################################
-# convert levels with numeric representation to descriptives
-####################################################################
-
-##########################################################################
 # convert loan_purpose levels from numbers to descriptives
 convert_loan_purpose <- function(loan_purpose){
   if (loan_purpose == 1){  return('Home purchase')  }
