@@ -1,8 +1,13 @@
-TN2019_main <- subset(TN2019, select = c('Application_Status', 'derived_race', 
-      'derived_ethnicity', 'derived_sex',  'income', 'loan_amount', 'applicant_age', 
-      'Applicant_Sex',  'Applicant_Race_1',  
-      'Applicant_Ethnicity_1', 'Occupancy_Type', 
-      'Loan_Purpose', 'county_code', 'Applicant_Credit_Score_Type'))
+
+# create regression subset
+
+TN2019_reg <- subset(TN2019_init, select = c('Application_Status', 'derived_msa_md', 
+      'derived_loan_product_type', 'derived_dwelling_category', 'derived_ethnicity', 
+      'Applicant_Ethnicity_1','Co_Applicant_Ethnicity_1', 'derived_race', 'Applicant_Race_1',
+      'Co_Applicant_Race_1', 'derived_sex', 'Applicant_Sex', 'Co_Applicant_Sex', 'applicant_age',
+      'co_applicant_age', 'property_value', 'income', 'debt_to_income_ratio'))
+
+summary(TN2019_reg)
 
 TN2019_main_2 <- subset(TN2019_main, select =-property_value)
 

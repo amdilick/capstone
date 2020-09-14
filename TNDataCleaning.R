@@ -61,7 +61,7 @@ TN2019_init <- subset(TN2019_init, select=-county_code)
 ##########################################################
 # begin evaluation of the race, ethnicity, sex columns  ##
 ##########################################################
-# 'Not applicable' values in race, ethnicity, sex columns indicate  
+# 'Not applicable' values in race, ethnicity, sex and age columns indicate  
 # purchaser is not a 'natural person' or the info was not reported by
 # the loan originator, cannot use these for bias analysis
 
@@ -84,6 +84,7 @@ TN2019_init <- subset(TN2019_init, applicant_sex != 4)  # Not applicable
 TN2019_init <- subset(TN2019_init, applicant_sex != 3)  # info not provided by applicant
 TN2019_init <- subset(TN2019_init, applicant_race_1 != 7)  # Not applicable
 TN2019_init <- subset(TN2019_init, applicant_race_1 != 6)  # info not provided by applicant
+TN2019_init <- subset(TN2019_init, applicant_age != 8888) # age not reported
 
 ################################################################################
 #  remove columns that cannot or will not be used for this analysis
@@ -290,7 +291,8 @@ TN2019_init <- subset(TN2019_init, select= -co_applicant_race_observed)
 TN2019_demographics <- subset(TN2019_init, select =c('derived_sex', 'Applicant_Sex', 'Applicant_Sex_Observed', 
        'Co_Applicant_Sex', 'Co_Applicant_Sex_Observed', 'derived_ethnicity', 'Applicant_Ethnicity_1', 
        'Applicant_Ethnicity_Observed', 'Co_Applicant_Ethnicity_1', 'Co_Applicant_Ethnicity_Observed', 
-       'derived_race', 'Applicant_Race_1', 'Applicant_Race_Observed', 'Co_Applicant_Race_1', 'Co_Applicant_Race_Observed'))
+       'derived_race', 'Applicant_Race_1', 'Applicant_Race_Observed', 'Co_Applicant_Race_1', 'Co_Applicant_Race_Observed',
+       'applicant_age', 'co_applicant_age'))
 View(TN2019_demographics)
 summary(TN2019_demographics)
 
@@ -304,18 +306,6 @@ TN2019_init <- subset(TN2019_init, select = -Co_Applicant_Race_Observed)
 TN2019_init <- subset(TN2019_init, select = -Co_Applicant_Ethnicity_Observed)
 TN2019_init <- subset(TN2019_init, select = -Co_Applicant_Sex_Observed)
 
-<<<<<<< HEAD
-################################################################################
-#  STOP HERE FOR NOW
-
-
-
-
-
-
-
-
-=======
 ##########################################################################
 # convert action_taken levels from numbers to descriptives
 convert_action_taken_descr <- function(action_taken){
@@ -331,12 +321,12 @@ convert_action_taken_descr <- function(action_taken){
 TN2019_init$Action_Taken_Description <- sapply(TN2019_init$action_taken,convert_action_taken_descr)
 TN2019_init$Action_Taken_Description <- as.factor(TN2019_init$Action_Taken_Description)
 
-# map action_taken levels to application_status
+# map action_taken levels to application_status 
 convert_application_status <- function(action_taken){
   if (action_taken == 1){  return('approved')  }
   else if (action_taken == 2){  return('approved')  }
   else if (action_taken == 3){  return('denied')  }
-  else if (action_taken == 4){  return('withdrawn')  }
+  else if (action_taken == 4){  return('withdrawn')  } 
   else if (action_taken == 5){  return('incomplete')  }
   else if (action_taken == 6){  return('Purchased loan')  }
   else if (action_taken == 7){  return('denied')  }
@@ -346,36 +336,12 @@ TN2019_init$Application_Status <- sapply(TN2019_init$action_taken,convert_applic
 TN2019_init$Application_Status <- as.factor(TN2019_init$Application_Status)
 # drop action_taken (lower case) column 
 TN2019_init <- subset(TN2019_init, select= -action_taken)
->>>>>>> 9dde6c8b68501fbe665496384f9405dc49605149
-
-#####################################################################################
-#   YOU ARE HERE
-#####################################################################################
-# subset the main analysis columns for summary statistics
-
-TN2019_regression <- subset(TN2019_init, select =c('derived_sex', 'Applicant_Sex', 'Co_Applicant_Sex', 
-       'derived_ethnicity', 'Applicant_Ethnicity_1', 'Co_Applicant_Ethnicity_1','derived_race', 
-       'Applicant_Race_1', 'Co_Applicant_Race_1', ''))
-View(TN2019_demographics)
-describe(TN2019_demographics)
 
 
 
-# remove rows with 
-TN2019 <- subset(TN2019, applicant_age!='8888')
-TN2019 <- subset(TN2019, co_applicant_age!='8888')
-
-<<<<<<< HEAD
 ################################################################################
 # convert remaining column levels with numeric representation to descriptives
 ################################################################################
-=======
-
-
-####################################################################
-# convert levels with numeric representation to descriptives
-####################################################################
->>>>>>> 9dde6c8b68501fbe665496384f9405dc49605149
 
 # convert loan_purpose levels from numbers to descriptives
 convert_loan_purpose <- function(loan_purpose){
@@ -658,6 +624,16 @@ TN2019_init$Purchaser_Type <- sapply(TN2019_init$purchaser_type,convert_purchase
 TN2019_init$Purchaser_Type<- as.factor(TN2019_init$Purchaser_Type)
 # drop purchaser_type (lower case) column 
 TN2019_init <- subset(TN2019_init, select= -purchaser_type)
+
+###############################################################################
+# subset the main analysis columns for summary statistics
+
+TN2019_regression <- subset(TN2019_init, select =c('Application_Status', 'derived_sex', 'Applicant_Sex', 
+                                                   'Co_Applicant_Sex', 'derived_ethnicity', 'Applicant_Ethnicity_1', 'Co_Applicant_Ethnicity_1',
+                                                   'derived_race', 'Applicant_Race_1', 'Co_Applicant_Race_1', 'derived_loan_product_type', 'derived_msa_md',
+                                                   ''))
+View(TN2019_regression)
+describe(TN2019_demographics)
 
 
 
