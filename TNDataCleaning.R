@@ -628,12 +628,28 @@ TN2019_init <- subset(TN2019_init, select= -purchaser_type)
 ###############################################################################
 # subset the main analysis columns for summary statistics
 
-TN2019_regression <- subset(TN2019_init, select =c('Application_Status', 'derived_sex', 'Applicant_Sex', 
-                                                   'Co_Applicant_Sex', 'derived_ethnicity', 'Applicant_Ethnicity_1', 'Co_Applicant_Ethnicity_1',
-                                                   'derived_race', 'Applicant_Race_1', 'Co_Applicant_Race_1', 'derived_loan_product_type', 'derived_msa_md',
-                                                   ''))
-View(TN2019_regression)
-describe(TN2019_demographics)
+TN2019_reg <- subset(TN2019_init, select =c('Application_Status', 'derived_msa_md',
+      'derived_loan_product_type', 'derived_dwelling_category', 'derived_ethnicity',
+      'Applicant_Ethnicity_1', 'Co_Applicant_Ethnicity_1', 'derived_race', 'Applicant_Race_1', 
+      'Co_Applicant_Race_1','derived_sex', 'Applicant_Sex', 'Co_Applicant_Sex', 'applicant_age', 
+      'co_applicant_age', 'property_value', 'income', 'debt_to_income_ratio'))
+View(TN2019_reg)
+describe(TN2019_reg)
+summary(TN2019_reg)
 
+#  remove rows with NAs 
+TN2019_reg <- subset(TN2019_reg, property_value != '')
+TN2019_reg <- subset(TN2019_reg, income != '')
+TN2019_reg <- subset(TN2019_reg, debt_to_income_ratio != '')
 
+# remove rows with 'Exempt'
+TN2019_reg <- subset(TN2019_reg, property_value != 'Exempt')
 
+# remove levels in factor variables with 0 observations
+TN2019_reg$derived_sex <- factor(TN2019_reg$derived_sex)
+TN2019_reg$derived_ethnicity <- factor(TN2019_reg$derived_ethnicity)
+TN2019_reg$derived_race <- factor(TN2019_reg$derived_race)
+TN2019_reg$Applicant_Ethnicity_1 <- factor(TN2019_reg$Applicant_Ethnicity_1)
+TN2019_reg$Applicant_Race_1 <- factor(TN2019_reg$Applicant_Race_1)
+TN2019_reg$applicant_age <- factor(TN2019_reg$applicant_age)
+TN2019_reg$derived_loan_product_type <- factor(TN2019_reg$derived_loan_product_type)

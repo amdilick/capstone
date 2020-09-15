@@ -1,5 +1,6 @@
 write.csv(TN2019, "TN2019.csv", row.names = FALSE)
 write.csv(TN2019_init, "TN2019_init.csv", row.names = FALSE)
+write.csv(TN2019_regression, "TN2019_regression.csv", row.names = FALSE)
 write.csv(TN2019_reg, "TN2019_reg.csv", row.names = FALSE)
 write.csv(TN2019_demographics, "TN2019_demographics.csv", row.names = FALSE)
 write.csv(TN2019_race, "TN2019_race.csv", row.names = FALSE)

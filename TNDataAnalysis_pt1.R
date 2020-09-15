@@ -1,15 +1,8 @@
+# view proportions of each level in factor columns
 
-# create regression subset
+tbl_debt <- table(TN2019_reg$debt_to_income_ratio)
+prop.table(tbl_debt)
 
-TN2019_reg <- subset(TN2019_init, select = c('Application_Status', 'derived_msa_md', 
-      'derived_loan_product_type', 'derived_dwelling_category', 'derived_ethnicity', 
-      'Applicant_Ethnicity_1','Co_Applicant_Ethnicity_1', 'derived_race', 'Applicant_Race_1',
-      'Co_Applicant_Race_1', 'derived_sex', 'Applicant_Sex', 'Co_Applicant_Sex', 'applicant_age',
-      'co_applicant_age', 'property_value', 'income', 'debt_to_income_ratio'))
-
-summary(TN2019_reg)
-
-TN2019_main_2 <- subset(TN2019_main, select =-property_value)
 
 TN2019_X2 <- chiSquare(TN2019$Application_Status ~ TN2019$derived_msa_md +
       TN2019$derived_loan_product_type + TN2019$derived_dwelling_category +
