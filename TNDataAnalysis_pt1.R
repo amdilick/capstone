@@ -2,6 +2,17 @@
 TN2019_backup <- TN2019_reg
 
 
+
+TN2019_reg <- subset(TN2019_init, select =c('Application_Status', 'derived_msa_md',
+                                            'derived_loan_product_type', 'derived_dwelling_category', 'derived_ethnicity',
+                                            'Applicant_Ethnicity_1', 'Co_Applicant_Ethnicity_1', 'derived_race', 'Applicant_Race_1', 
+                                            'Co_Applicant_Race_1','derived_sex', 'Applicant_Sex', 'Co_Applicant_Sex', 'applicant_age', 
+                                            'co_applicant_age', 'property_value', 'income', 'debt_to_income_ratio'))
+View(TN2019_reg)
+describe(TN2019_reg)
+summary(TN2019_reg)
+
+
 tbl_debt <- table(TN2019_reg$debt_to_income_ratio)
 prop.table(tbl_debt)
 TN2019_reg$Applicant_Ethnicity <- TN2019_reg$Applicant_Ethnicity_1

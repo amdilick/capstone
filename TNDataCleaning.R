@@ -12,12 +12,6 @@ TN2019_init <- subset(X2019publicTN_allColumns, select=-activity_year)
 TN2019_init <- subset(TN2019_init, select=-state_code)
 
 # remove columns with low data density or no data 
-TN2019_init <- subset(TN2019_init, select=-total_points_and_fees)
-TN2019_init <- subset(TN2019_init, select=-discount_points)
-TN2019_init <- subset(TN2019_init, select=-lender_credits)
-TN2019_init <- subset(TN2019_init, select=-prepayment_penalty_term)
-TN2019_init <- subset(TN2019_init, select=-intro_rate_period)
-TN2019_init <- subset(TN2019_init, select=-multifamily_affordable_units)
 TN2019_init <- subset(TN2019_init, select=-applicant_ethnicity_2)
 TN2019_init <- subset(TN2019_init, select=-applicant_ethnicity_3)
 TN2019_init <- subset(TN2019_init, select=-applicant_ethnicity_4)
@@ -47,16 +41,9 @@ TN2019_init <- subset(TN2019_init, select=-denial_reason_4)
 TN2019_init <- subset(TN2019_init, select=-applicant_age_above_62)
 TN2019_init <- subset(TN2019_init, select=-co_applicant_age_above_62)
 
-# remove columns that are covered in 'derived' columns
-# derived_loan_product_type
-TN2019_init <- subset(TN2019_init, select=-loan_type)
-TN2019_init <- subset(TN2019_init, select=-lien_status)
-# derived_dwelling_category
-TN2019_init <- subset(TN2019_init, select=-construction_method)
-TN2019_init <- subset(TN2019_init, select=-total_units)
-# derived_msa_md
-TN2019_init <- subset(TN2019_init, select=-census_tract)
-TN2019_init <- subset(TN2019_init, select=-county_code)
+
+
+
 
 ##########################################################
 # begin evaluation of the race, ethnicity, sex columns  ##
@@ -86,6 +73,35 @@ TN2019_init <- subset(TN2019_init, applicant_race_1 != 7)  # Not applicable
 TN2019_init <- subset(TN2019_init, applicant_race_1 != 6)  # info not provided by applicant
 TN2019_init <- subset(TN2019_init, applicant_age != 8888) # age not reported
 
+contents(TN2019_init)
+
+
+
+
+# remove rows for applications made primarily for business purposes
+TN2019_init <- subset(TN2019_init, business_or_commercial_purpose != 1)
+# keep only rows for applications for only one dwelling
+TN2019_init <- subset(TN2019_init, total_units == 1)
+# remove column that has only NA or Exempt values
+TN2019_init <- subset(TN2019_init, select=-multifamily_affordable_units)
+# exclude rows where loan purpose is NA
+# purchased loans where origination took place before Jan 1 2018
+TN2019_init <- subset(TN2019_init, loan_purpose != 5)
+
+contents(TN2019_init)
+
+
+# remove columns that are covered in 'derived' columns
+# derived_loan_product_type
+TN2019_init <- subset(TN2019_init, select=-loan_type)
+TN2019_init <- subset(TN2019_init, select=-lien_status)
+# derived_dwelling_category
+TN2019_init <- subset(TN2019_init, select=-construction_method)
+TN2019_init <- subset(TN2019_init, select=-total_units)
+# derived_msa_md
+TN2019_init <- subset(TN2019_init, select=-census_tract)
+TN2019_init <- subset(TN2019_init, select=-county_code)
+
 ################################################################################
 #  remove columns that cannot or will not be used for this analysis
 ################################################################################
@@ -98,6 +114,19 @@ TN2019_init <- subset(TN2019_init, select=-tract_to_msa_income_percentage)  # co
 TN2019_init <- subset(TN2019_init, select=-tract_owner_occupied_units) # corresponds to census_tract
 TN2019_init <- subset(TN2019_init, select=-tract_one_to_four_family_homes)  # corresponds to census_tract
 TN2019_init <- subset(TN2019_init, select=-tract_median_age_of_housing_units)  # corresponds to census_tract
+TN2019_init <- subset(TN2019_init, select=-manufactured_home_secured_property_type)  # corresponds to construction method
+TN2019_init <- subset(TN2019_init, select=-manufactured_home_land_property_interest)  # corresponds to construction method
+
+
+#  keep these in to review with approved loans - may remove later
+#TN2019_init <- subset(TN2019_init, select=-total_points_and_fees)
+#TN2019_init <- subset(TN2019_init, select=-discount_points)
+#TN2019_init <- subset(TN2019_init, select=-lender_credits)
+#TN2019_init <- subset(TN2019_init, select=-prepayment_penalty_term)
+#TN2019_init <- subset(TN2019_init, select=-intro_rate_period)
+
+
+
 
 ################################################################################
 #  convert numeric levels to descriptive terms for easier visual interpretation
@@ -164,8 +193,8 @@ convert_applicant_ethnicity_1 <- function(applicant_ethnicity_1){
   else if (applicant_ethnicity_1 == 3){  return('Information not provided by applicant')  }
   else if (applicant_ethnicity_1 == 4){  return('Not applicable')  }
 }
-TN2019_init$Applicant_Ethnicity_1 <- sapply(TN2019_init$applicant_ethnicity_1,convert_applicant_ethnicity_1)
-TN2019_init$Applicant_Ethnicity_1 <- as.factor(TN2019_init$Applicant_Ethnicity_1)
+TN2019_init$Applicant_Ethnicity <- sapply(TN2019_init$applicant_ethnicity_1,convert_applicant_ethnicity_1)
+TN2019_init$Applicant_Ethnicity <- as.factor(TN2019_init$Applicant_Ethnicity)
 # drop applicant_ethnicity_1 (lower case) column 
 TN2019_init <- subset(TN2019_init, select= -applicant_ethnicity_1)
 
@@ -181,8 +210,8 @@ convert_co_applicant_ethnicity_1<- function(co_applicant_ethnicity_1){
   else if (co_applicant_ethnicity_1 == 4){  return('Not applicable')  }
   else if (co_applicant_ethnicity_1 == 5){  return('No co-applicant')  }
 }
-TN2019_init$Co_Applicant_Ethnicity_1 <- sapply(TN2019_init$co_applicant_ethnicity_1,convert_co_applicant_ethnicity_1)
-TN2019_init$Co_Applicant_Ethnicity_1 <- as.factor(TN2019_init$Co_Applicant_Ethnicity_1)
+TN2019_init$Co_Applicant_Ethnicity <- sapply(TN2019_init$co_applicant_ethnicity_1,convert_co_applicant_ethnicity_1)
+TN2019_init$Co_Applicant_Ethnicity <- as.factor(TN2019_init$Co_Applicant_Ethnicity)
 # drop applicant_ethnicity_1 (lower case) column 
 TN2019_init <- subset(TN2019_init, select= -co_applicant_ethnicity_1)
 
@@ -230,8 +259,8 @@ convert_applicant_race_1<- function(applicant_race_1){
   else if (applicant_race_1 == 6){  return('Information not provided by applicant')  }
   else if (applicant_race_1 == 7){  return('Not applicable')  }
 }
-TN2019_init$Applicant_Race_1 <- sapply(TN2019_init$applicant_race_1,convert_applicant_race_1)
-TN2019_init$Applicant_Race_1 <- as.factor(TN2019_init$Applicant_Race_1)
+TN2019_init$Applicant_Race <- sapply(TN2019_init$applicant_race_1,convert_applicant_race_1)
+TN2019_init$Applicant_Race <- as.factor(TN2019_init$Applicant_Race)
 # drop applicant_race_1 (lower case) column 
 TN2019_init <- subset(TN2019_init, select= -applicant_race_1)
 
@@ -257,8 +286,8 @@ convert_co_applicant_race_1<- function(co_applicant_race_1){
   else if (co_applicant_race_1 == 7){  return('Not applicable')  }
   else if (co_applicant_race_1 == 8){  return('No co-applicant')  }
 }
-TN2019_init$Co_Applicant_Race_1 <- sapply(TN2019_init$co_applicant_race_1,convert_co_applicant_race_1)
-TN2019_init$Co_Applicant_Race_1 <- as.factor(TN2019_init$Co_Applicant_Race_1)
+TN2019_init$Co_Applicant_Race <- sapply(TN2019_init$co_applicant_race_1,convert_co_applicant_race_1)
+TN2019_init$Co_Applicant_Race <- as.factor(TN2019_init$Co_Applicant_Race)
 # drop applicant_race_1 (lower case) column 
 TN2019_init <- subset(TN2019_init, select= -co_applicant_race_1)
 
@@ -477,34 +506,6 @@ TN2019_init$Occupancy_Type <- as.factor(TN2019_init$Occupancy_Type)
 TN2019_init <- subset(TN2019_init, select= -occupancy_type)
 
 ##########################################################################
-# convert manufactured_home_secured_property_type levels from numbers to descriptives
-convert_manufactured_home_prop_type<- function(manufactured_home_secured_property_type){
-  if (manufactured_home_secured_property_type == 1){  return('Manufactured home and land')  }
-  else if (manufactured_home_secured_property_type == 2){  return('Manufactured home and not land')  }
-  else if (manufactured_home_secured_property_type == 3){  return('Not applicable')  }
-  else if (manufactured_home_secured_property_type == 1111){  return('Exempt')  }
-}
-TN2019_init$Manufactured_Home_Secured_Property_Type <- sapply(TN2019_init$manufactured_home_secured_property_type,convert_manufactured_home_prop_type)
-TN2019_init$Manufactured_Home_Secured_Property_Type <- as.factor(TN2019_init$Manufactured_Home_Secured_Property_Type)
-# drop manufactured_home_secured_property_type (lower case) column 
-TN2019_init <- subset(TN2019_init, select= -manufactured_home_secured_property_type)
-
-##########################################################################
-# convert manufactured_home_land_property_interest levels from numbers to descriptives
-convert_manufactured_home_land_prop_interest<- function(manufactured_home_land_property_interest){
-  if (manufactured_home_land_property_interest == 1){  return('Direct ownership')  }
-  else if (manufactured_home_land_property_interest == 2){  return('Indirect ownership')  }
-  else if (manufactured_home_land_property_interest == 3){  return('Paid leasehold')  }
-  else if (manufactured_home_land_property_interest == 4){  return('Unpaid leasehold')  }
-  else if (manufactured_home_land_property_interest == 5){  return('Not applicable')  }
-  else if (manufactured_home_land_property_interest == 1111){  return('Exempt')  }
-}
-TN2019_init$Manufactured_Home_Land_Property_Interest <- sapply(TN2019_init$manufactured_home_land_property_interest,convert_manufactured_home_land_prop_interest)
-TN2019_init$Manufactured_Home_Land_Property_Interest <- as.factor(TN2019_init$Manufactured_Home_Land_Property_Interest)
-# drop manufactured_home_land_property_interest (lower case) column 
-TN2019_init <- subset(TN2019_init, select= -manufactured_home_land_property_interest)
-
-##########################################################################
 # convert submission_of_application levels from numbers to descriptives
 convert_submission_of_application <- function(submission_of_application){
   if (submission_of_application == 1){  return('Submitted directly to your institution')  }
@@ -625,31 +626,24 @@ TN2019_init$Purchaser_Type<- as.factor(TN2019_init$Purchaser_Type)
 # drop purchaser_type (lower case) column 
 TN2019_init <- subset(TN2019_init, select= -purchaser_type)
 
+summary(TN2019_init)  # looking for levels w/ 0 obs
+# remove levels in factor variables with 0 observations
+TN2019_init$derived_dwelling_category <- factor(TN2019_init$derived_dwelling_category)
+TN2019_init$derived_sex <- factor(TN2019_init$derived_sex)
+TN2019_init$derived_ethnicity <- factor(TN2019_init$derived_ethnicity)
+TN2019_init$derived_race <- factor(TN2019_init$derived_race)
+TN2019_init$Applicant_Ethnicity <- factor(TN2019_init$Applicant_Ethnicity)
+TN2019_init$Applicant_Race <- factor(TN2019_init$Applicant_Race)
+TN2019_init$applicant_age <- factor(TN2019_init$applicant_age)
+TN2019_init$derived_loan_product_type <- factor(TN2019_init$derived_loan_product_type)
+
 ###############################################################################
 # subset the main analysis columns for summary statistics
 
-TN2019_reg <- subset(TN2019_init, select =c('Application_Status', 'derived_msa_md',
-      'derived_loan_product_type', 'derived_dwelling_category', 'derived_ethnicity',
-      'Applicant_Ethnicity_1', 'Co_Applicant_Ethnicity_1', 'derived_race', 'Applicant_Race_1', 
-      'Co_Applicant_Race_1','derived_sex', 'Applicant_Sex', 'Co_Applicant_Sex', 'applicant_age', 
-      'co_applicant_age', 'property_value', 'income', 'debt_to_income_ratio'))
-View(TN2019_reg)
-describe(TN2019_reg)
-summary(TN2019_reg)
+TN2019_regression <- TN2019_init
+TN2019_dTree <- TN2019_init
+TN2019_approved <- subset(TN2019_init, Application_Status == 'approved')
+TN2019_denied <- subset(TN2019_init, Application_Status == 'denied')
 
-#  remove rows with NAs 
-TN2019_reg <- subset(TN2019_reg, property_value != '')
-TN2019_reg <- subset(TN2019_reg, income != '')
-TN2019_reg <- subset(TN2019_reg, debt_to_income_ratio != '')
 
-# remove rows with 'Exempt'
-TN2019_reg <- subset(TN2019_reg, property_value != 'Exempt')
 
-# remove levels in factor variables with 0 observations
-TN2019_reg$derived_sex <- factor(TN2019_reg$derived_sex)
-TN2019_reg$derived_ethnicity <- factor(TN2019_reg$derived_ethnicity)
-TN2019_reg$derived_race <- factor(TN2019_reg$derived_race)
-TN2019_reg$Applicant_Ethnicity_1 <- factor(TN2019_reg$Applicant_Ethnicity_1)
-TN2019_reg$Applicant_Race_1 <- factor(TN2019_reg$Applicant_Race_1)
-TN2019_reg$applicant_age <- factor(TN2019_reg$applicant_age)
-TN2019_reg$derived_loan_product_type <- factor(TN2019_reg$derived_loan_product_type)
