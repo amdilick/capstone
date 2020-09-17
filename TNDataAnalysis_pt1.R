@@ -1,42 +1,34 @@
 # view proportions of each level in factor columns
-TN2019_backup <- TN2019_reg
+TN2019_reg_backup <- TN2019_regression
 
 
-
-TN2019_reg <- subset(TN2019_init, select =c('Application_Status', 'derived_msa_md',
+TN2019_reg_X2 <- subset(TN2019_regression, select =c('Application_Status', 'derived_msa_md',
                                             'derived_loan_product_type', 'derived_dwelling_category', 'derived_ethnicity',
                                             'Applicant_Ethnicity_1', 'Co_Applicant_Ethnicity_1', 'derived_race', 'Applicant_Race_1', 
                                             'Co_Applicant_Race_1','derived_sex', 'Applicant_Sex', 'Co_Applicant_Sex', 'applicant_age', 
                                             'co_applicant_age', 'property_value', 'income', 'debt_to_income_ratio'))
-View(TN2019_reg)
-describe(TN2019_reg)
-summary(TN2019_reg)
+View(TN2019_regression)
+describe(TN2019_regression)
+summary(TN2019_regression)
 
 
-tbl_debt <- table(TN2019_reg$debt_to_income_ratio)
+tbl_debt <- table(TN2019_regression$debt_to_income_ratio)
 prop.table(tbl_debt)
-TN2019_reg$Applicant_Ethnicity <- TN2019_reg$Applicant_Ethnicity_1
-TN2019_reg <- subset(TN2019_reg, select=-Applicant_Ethnicity_1)
-TN2019_reg$Co_Applicant_Ethnicity <- TN2019_reg$Co_Applicant_Ethnicity_1
-TN2019_reg <- subset(TN2019_reg, select=-Co_Applicant_Ethnicity_1)
-TN2019_reg$Applicant_Race <- TN2019_reg$Applicant_Race_1
-TN2019_reg <- subset(TN2019_reg, select=-Applicant_Race_1)
-TN2019_reg$Co_Applicant_Race<- TN2019_reg$Co_Applicant_Race_1
-TN2019_reg <- subset(TN2019_reg, select=-Co_Applicant_Race_1)
 
-TN2019_X2 <- chiSquare(TN2019_reg$Application_Status ~ TN2019_reg$derived_msa_md +
-      TN2019_reg$derived_loan_product_type + TN2019_reg$derived_dwelling_category +
-      TN2019_reg$derived_ethnicity + TN2019_reg$Applicant_Ethnicity +
-      TN2019_reg$Co_Applicant_Ethnicity + TN2019_reg$derived_race + TN2019_reg$Applicant_Race + 
-      TN2019_reg$Co_Applicant_Race + TN2019_reg$derived_sex + 
-      TN2019_reg$applicant_age + TN2019_reg$Applicant_Sex)  
+library(Hmisc)
+TN2019_X2 <- chiSquare(TN2019_regression$Application_Status ~ TN2019_regression$derived_msa_md +
+                          TN2019_regression$derived_loan_product_type + TN2019_regression$derived_dwelling_category +
+                          TN2019_regression$derived_ethnicity + TN2019_regression$Applicant_Ethnicity +
+                          TN2019_regression$Co_Applicant_Ethnicity + TN2019_regression$derived_race + TN2019_regression$Applicant_Race + 
+                          TN2019_regression$Co_Applicant_Race + TN2019_regression$derived_sex + 
+                          TN2019_regression$applicant_age + TN2019_regression$Applicant_Sex)  
 print(TN2019_X2)
-plot(chiSquare(TN2019_reg$Application_Status ~ TN2019_reg$derived_msa_md +
-      TN2019_reg$derived_loan_product_type + TN2019_reg$derived_dwelling_category +
-      TN2019_reg$derived_ethnicity + TN2019_reg$Applicant_Ethnicity +
-      TN2019_reg$Co_Applicant_Ethnicity + TN2019_reg$derived_race + TN2019_reg$Applicant_Race + 
-      TN2019_reg$Co_Applicant_Race + TN2019_reg$derived_sex + 
-      TN2019_reg$applicant_age + TN2019_reg$Applicant_Sex))
+plot(chiSquare(TN2019_regression$Application_Status ~ TN2019_regression$derived_msa_md +
+                  TN2019_regression$derived_loan_product_type + TN2019_regression$derived_dwelling_category +
+                  TN2019_regression$derived_ethnicity + TN2019_regression$Applicant_Ethnicity +
+                  TN2019_regression$Co_Applicant_Ethnicity + TN2019_regression$derived_race + TN2019_regression$Applicant_Race + 
+                  TN2019_regression$Co_Applicant_Race + TN2019_regression$derived_sex + 
+                  TN2019_regression$applicant_age + TN2019_regression$Applicant_Sex))
 
 #TN2019_Xval <- subset(TN2019_main, select=-property_value)
 TN2019_Xval <- subset(TN2019_reg, select=-Application_Status)

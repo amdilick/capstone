@@ -41,10 +41,6 @@ TN2019_init <- subset(TN2019_init, select=-denial_reason_4)
 TN2019_init <- subset(TN2019_init, select=-applicant_age_above_62)
 TN2019_init <- subset(TN2019_init, select=-co_applicant_age_above_62)
 
-
-
-
-
 ##########################################################
 # begin evaluation of the race, ethnicity, sex columns  ##
 ##########################################################
@@ -76,28 +72,60 @@ TN2019_init <- subset(TN2019_init, applicant_age != 8888) # age not reported
 contents(TN2019_init)
 
 
-
-
 # remove rows for applications made primarily for business purposes
 TN2019_init <- subset(TN2019_init, business_or_commercial_purpose != 1)
 # keep only rows for applications for only one dwelling
 TN2019_init <- subset(TN2019_init, total_units == 1)
+# remove total_units column
+TN2019_init <- subset(TN2019_init, select=-total_units)
+
 # remove column that has only NA or Exempt values
 TN2019_init <- subset(TN2019_init, select=-multifamily_affordable_units)
 # exclude rows where loan purpose is NA
 # purchased loans where origination took place before Jan 1 2018
 TN2019_init <- subset(TN2019_init, loan_purpose != 5)
 
-contents(TN2019_init)
 
 
-# remove columns that are covered in 'derived' columns
-# derived_loan_product_type
-TN2019_init <- subset(TN2019_init, select=-loan_type)
-TN2019_init <- subset(TN2019_init, select=-lien_status)
-# derived_dwelling_category
-TN2019_init <- subset(TN2019_init, select=-construction_method)
-TN2019_init <- subset(TN2019_init, select=-total_units)
+##########################################################################
+# convert action_taken levels from numbers to descriptives
+convert_action_taken_descr <- function(action_taken){
+  if (action_taken == 1){  return('Loan originated')  }
+  else if (action_taken == 2){  return('Application approved but not accepted')  }
+  else if (action_taken == 3){  return('Application denied')  }
+  else if (action_taken == 4){  return('Application withdrawn by applicant')  }
+  else if (action_taken == 5){  return('File closed for incompleteness')  }
+  else if (action_taken == 6){  return('Purchased loan')  }
+  else if (action_taken == 7){  return('Preapproval request denied')  }
+  else if (action_taken == 8){  return('Preapproval request approved but not accepted')  }
+}
+TN2019_init$Action_Taken_Description <- sapply(TN2019_init$action_taken,convert_action_taken_descr)
+TN2019_init$Action_Taken_Description <- as.factor(TN2019_init$Action_Taken_Description)
+
+# map action_taken levels to application_status 
+convert_application_status <- function(action_taken){
+  if (action_taken == 1){  return('approved')  }
+  else if (action_taken == 2){  return('approved')  }
+  else if (action_taken == 3){  return('denied')  }
+  else if (action_taken == 4){  return('withdrawn')  } 
+  else if (action_taken == 5){  return('incomplete')  }
+  else if (action_taken == 6){  return('Purchased loan')  }
+  else if (action_taken == 7){  return('denied')  }
+  else if (action_taken == 8){  return('approved')  }
+}
+TN2019_init$Application_Status <- sapply(TN2019_init$action_taken,convert_application_status)
+TN2019_init$Application_Status <- as.factor(TN2019_init$Application_Status)
+# drop action_taken (lower case) column 
+TN2019_init <- subset(TN2019_init, select= -action_taken)
+
+################################################################################
+# evaluate the 'derived' column level frequencies
+################################################################################
+summary(TN2019_init$derived_dwelling_category)
+# keep construction_method
+# remove total_units
+TN2019_init <- subset(TN2019_init, select=-derived_dwelling_category)
+
 # derived_msa_md
 TN2019_init <- subset(TN2019_init, select=-census_tract)
 TN2019_init <- subset(TN2019_init, select=-county_code)
@@ -335,36 +363,6 @@ TN2019_init <- subset(TN2019_init, select = -Co_Applicant_Race_Observed)
 TN2019_init <- subset(TN2019_init, select = -Co_Applicant_Ethnicity_Observed)
 TN2019_init <- subset(TN2019_init, select = -Co_Applicant_Sex_Observed)
 
-##########################################################################
-# convert action_taken levels from numbers to descriptives
-convert_action_taken_descr <- function(action_taken){
-  if (action_taken == 1){  return('Loan originated')  }
-  else if (action_taken == 2){  return('Application approved but not accepted')  }
-  else if (action_taken == 3){  return('Application denied')  }
-  else if (action_taken == 4){  return('Application withdrawn by applicant')  }
-  else if (action_taken == 5){  return('File closed for incompleteness')  }
-  else if (action_taken == 6){  return('Purchased loan')  }
-  else if (action_taken == 7){  return('Preapproval request denied')  }
-  else if (action_taken == 8){  return('Preapproval request approved but not accepted')  }
-}
-TN2019_init$Action_Taken_Description <- sapply(TN2019_init$action_taken,convert_action_taken_descr)
-TN2019_init$Action_Taken_Description <- as.factor(TN2019_init$Action_Taken_Description)
-
-# map action_taken levels to application_status 
-convert_application_status <- function(action_taken){
-  if (action_taken == 1){  return('approved')  }
-  else if (action_taken == 2){  return('approved')  }
-  else if (action_taken == 3){  return('denied')  }
-  else if (action_taken == 4){  return('withdrawn')  } 
-  else if (action_taken == 5){  return('incomplete')  }
-  else if (action_taken == 6){  return('Purchased loan')  }
-  else if (action_taken == 7){  return('denied')  }
-  else if (action_taken == 8){  return('approved')  }
-}
-TN2019_init$Application_Status <- sapply(TN2019_init$action_taken,convert_application_status)
-TN2019_init$Application_Status <- as.factor(TN2019_init$Application_Status)
-# drop action_taken (lower case) column 
-TN2019_init <- subset(TN2019_init, select= -action_taken)
 
 
 
@@ -492,6 +490,18 @@ TN2019_init$Other_Nonamortizing_Features <- sapply(TN2019_init$other_nonamortizi
 TN2019_init$Other_Nonamortizing_Features <- as.factor(TN2019_init$Other_Nonamortizing_Features)
 # drop other_nonamortizing_features (lower case) column 
 TN2019_init <- subset(TN2019_init, select= -other_nonamortizing_features)
+
+##########################################################################
+# convert construction_method levels from numbers to descriptives
+convert_construction_method <- function(construction_method){
+  if (construction_method == 1){  return('Site-built')  }
+  else if (construction_method == 2){  return('Manufactured home')  }
+}
+TN2019_init$Construction_Method <- sapply(TN2019_init$construction_method,convert_construction_method)
+TN2019_init$Construction_Method <- as.factor(TN2019_init$Construction_Method)
+# drop occupancy_type (lower case) column 
+TN2019_init <- subset(TN2019_init, select= -construction_method)
+
 
 ##########################################################################
 # convert occupancy_type levels from numbers to descriptives
