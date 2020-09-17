@@ -641,6 +641,8 @@ summary(TN2019_init)
 # looking for levels w/ 0 obs
 # remove levels in factor variables with 0 observations
 TN2019_init$derived_sex <- factor(TN2019_init$derived_sex)
+TN2019_init$Applicant_Sex <- factor(TN2019_init$Applicant_Sex)
+TN2019_init$Co_Applicant_Sex <- factor(TN2019_init$Co_Applicant_Sex)
 TN2019_init$derived_ethnicity <- factor(TN2019_init$derived_ethnicity)
 TN2019_init$derived_race <- factor(TN2019_init$derived_race)
 TN2019_init$Applicant_Ethnicity <- factor(TN2019_init$Applicant_Ethnicity)
