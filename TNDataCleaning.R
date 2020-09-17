@@ -636,9 +636,10 @@ TN2019_init$Purchaser_Type<- as.factor(TN2019_init$Purchaser_Type)
 # drop purchaser_type (lower case) column 
 TN2019_init <- subset(TN2019_init, select= -purchaser_type)
 
-summary(TN2019_init)  # looking for levels w/ 0 obs
+summary(TN2019_init)  
+
+# looking for levels w/ 0 obs
 # remove levels in factor variables with 0 observations
-TN2019_init$derived_dwelling_category <- factor(TN2019_init$derived_dwelling_category)
 TN2019_init$derived_sex <- factor(TN2019_init$derived_sex)
 TN2019_init$derived_ethnicity <- factor(TN2019_init$derived_ethnicity)
 TN2019_init$derived_race <- factor(TN2019_init$derived_race)

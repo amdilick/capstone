@@ -17,9 +17,9 @@ prop.table(tbl_debt)
 
 library(Hmisc)
 TN2019_X2 <- chiSquare(TN2019_regression$Application_Status ~ TN2019_regression$derived_msa_md +
-                          TN2019_regression$derived_loan_product_type + TN2019_regression$derived_dwelling_category +
+                          TN2019_regression$derived_loan_product_type + TN2019_regression$Applicant_Race + 
                           TN2019_regression$derived_ethnicity + TN2019_regression$Applicant_Ethnicity +
-                          TN2019_regression$Co_Applicant_Ethnicity + TN2019_regression$derived_race + TN2019_regression$Applicant_Race + 
+                          TN2019_regression$Co_Applicant_Ethnicity + TN2019_regression$derived_race + 
                           TN2019_regression$Co_Applicant_Race + TN2019_regression$derived_sex + 
                           TN2019_regression$applicant_age + TN2019_regression$Applicant_Sex)  
 print(TN2019_X2)
