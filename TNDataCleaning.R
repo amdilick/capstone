@@ -3,6 +3,7 @@
 
 # Get info about the TN Dataset
 library(Hmisc)
+library(tidyr)
 contents(X2019publicTN_allColumns)
 describe(X2019publicTN_allColumns)
 summary(X2019publicTN_allColumns)
@@ -54,6 +55,7 @@ TN2019_init <- subset(TN2019_init, applicant_race_1!='')
 TN2019_init <- subset(TN2019_init, co_applicant_ethnicity_1!='')
 TN2019_init <- subset(TN2019_init, applicant_ethnicity_1!='')
 
+
 # remove records for loans that were neither approved nor denied and purchased loans
 # where the entity did not review the loan application or make the credit decision
 TN2019_init <- subset(TN2019_init, action_taken != 6)  # purchased loan
@@ -63,10 +65,16 @@ TN2019_init <- subset(TN2019_init, action_taken != 4)  # application withdrawn b
 # remove rows where race/ethnicity/sex has NA or info was not provided by applicant
 TN2019_init <- subset(TN2019_init, applicant_ethnicity_1 != 4) # Not applicable
 TN2019_init <- subset(TN2019_init, applicant_ethnicity_1 != 3) # info not provided by applicant 
+TN2019_init <- subset(TN2019_init, co_applicant_ethnicity_1 != 4) # Not applicable
+TN2019_init <- subset(TN2019_init, co_applicant_ethnicity_1 != 3) # info not provided by applicant 
 TN2019_init <- subset(TN2019_init, applicant_sex != 4)  # Not applicable
 TN2019_init <- subset(TN2019_init, applicant_sex != 3)  # info not provided by applicant
+TN2019_init <- subset(TN2019_init, co_applicant_sex != 4)  # Not applicable
+TN2019_init <- subset(TN2019_init, co_applicant_sex != 3)  # info not provided by applicant
 TN2019_init <- subset(TN2019_init, applicant_race_1 != 7)  # Not applicable
 TN2019_init <- subset(TN2019_init, applicant_race_1 != 6)  # info not provided by applicant
+TN2019_init <- subset(TN2019_init, co_applicant_race_1 != 7)  # Not applicable
+TN2019_init <- subset(TN2019_init, co_applicant_race_1 != 6)  # info not provided by applicant
 TN2019_init <- subset(TN2019_init, applicant_age != 8888) # age not reported
 
 contents(TN2019_init)
@@ -355,6 +363,9 @@ summary(TN2019_demographics)
 
 describe(TN2019_demographics)
 
+# create new column to represent the primary and co-applicants together instead of 'Joint' 
+TN2019_init <- unite(TN2019_init, col='Combined_Applicant_Sex', Applicant_Sex, Co_Applicant_Sex, sep='-', remove=FALSE)
+TN2019_init$Combined_Applicant_Sex <- as.factor(TN2019_init$Combined_Applicant_Sex)
 # remove 'observed' columns as they don't provide additional insight
 TN2019_init <- subset(TN2019_init, select = -Applicant_Race_Observed)
 TN2019_init <- subset(TN2019_init, select = -Applicant_Ethnicity_Observed)
@@ -652,6 +663,8 @@ TN2019_init$derived_loan_product_type <- factor(TN2019_init$derived_loan_product
 
 ###############################################################################
 # subset the main analysis columns for summary statistics
+
+
 
 TN2019_regression <- TN2019_init
 TN2019_dTree <- TN2019_init
