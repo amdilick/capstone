@@ -513,6 +513,29 @@ TN2019_init$Construction_Method <- as.factor(TN2019_init$Construction_Method)
 # drop occupancy_type (lower case) column 
 TN2019_init <- subset(TN2019_init, select= -construction_method)
 
+##########################################################################
+# convert loan_type levels from numbers to descriptives
+convert_loan_type <- function(loan_type){
+  if (loan_type == 1){  return('Conventional')  }
+  else if (loan_type == 2){  return('FHA')  }
+  else if (loan_type == 3){  return('VA')  }
+  else if (loan_type == 4){  return('RHS or FSA')  }
+}
+TN2019_init$Loan_Type <- sapply(TN2019_init$loan_type,convert_loan_type)
+TN2019_init$Loan_Type <- as.factor(TN2019_init$Loan_Type)
+# drop occupancy_type (lower case) column 
+TN2019_init <- subset(TN2019_init, select= -loan_type)
+
+##########################################################################
+# convert lien_status levels from numbers to descriptives
+convert_lien_status <- function(lien_status){
+  if (lien_status == 1){  return('First lien')  }
+  else if (lien_status == 2){  return('Subordinate lien')  }
+}
+TN2019_init$Lien_Status <- sapply(TN2019_init$lien_status,convert_lien_status)
+TN2019_init$Lien_Status <- as.factor(TN2019_init$Lien_Status)
+# drop occupancy_type (lower case) column 
+TN2019_init <- subset(TN2019_init, select= -lien_status)
 
 ##########################################################################
 # convert occupancy_type levels from numbers to descriptives
