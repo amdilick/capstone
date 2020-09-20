@@ -1,5 +1,5 @@
 # Univariate stats - graphs for demographic details
-
+#  rows = 197926, cols = 48
 library(ggplot2)
 library(gridExtra)
 
@@ -94,25 +94,42 @@ other3 <- ggplot(TN2019_init, aes(x=Occupancy_Type)) + ggtitle("Occupancy Type")
   geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
 grid.arrange(other1, other2, other3, ncol=1)
 
+#  rows = 197926, cols = 40
 
-##################  numeric columns - loan amount, property value, income
-
-TN2019_regression$property_value <- as.double(TN2019_regression$property_value)
-
+# create subset for regression analysis
+TN2019_regression <- TN2019_init
 
 ##################
-# remove columns only appplicable to approved applications
-TN2019_regression <- subset(TN2019_regress, select =-combined_loan_to_value_ratio)
-TN2019_regression <- subset(TN2019_regress, select =-interest_rate)
-TN2019_regression <- subset(TN2019_regress, select =-rate_spread)
-TN2019_regression <- subset(TN2019_regress, select =-total_loan_costs)
-TN2019_regression <- subset(TN2019_regress, select =-total_points_and_fees)
-TN2019_regression <- subset(TN2019_regress, select =-origination_charges)
-TN2019_regression <- subset(TN2019_regress, select =-discount_points)
-TN2019_regression <- subset(TN2019_regress, select =-lender_credits)
-TN2019_regression <- subset(TN2019_regress, select =-loan_term)
-TN2019_regression <- subset(TN2019_regress, select =-prepayment_penalty_term)
-TN2019_regression <- subset(TN2019_regress, select =-intro_rate_period)
+# remove columns only applicable to approved applications
+TN2019_regression <- subset(TN2019_regression, select =-combined_loan_to_value_ratio)
+TN2019_regression <- subset(TN2019_regression, select =-interest_rate)
+TN2019_regression <- subset(TN2019_regression, select =-rate_spread)
+TN2019_regression <- subset(TN2019_regression, select =-total_loan_costs)
+TN2019_regression <- subset(TN2019_regression, select =-total_points_and_fees)
+TN2019_regression <- subset(TN2019_regression, select =-origination_charges)
+TN2019_regression <- subset(TN2019_regression, select =-discount_points)
+TN2019_regression <- subset(TN2019_regression, select =-lender_credits)
+TN2019_regression <- subset(TN2019_regression, select =-loan_term)
+TN2019_regression <- subset(TN2019_regression, select =-prepayment_penalty_term)
+TN2019_regression <- subset(TN2019_regression, select =-intro_rate_period)
+
+##################  numeric columns - loan amount, property value, income
+library(dplyr)
+library(ggpubr)
+
+qqnorm(TN2019_regression$income, main="Normal Q-Q plot for Income")
+qqnorm(TN2019_regression$property_value, main="Normal Q-Q plot for Property Value")
+qqnorm(TN2019_regression$loan_amount, main="Normal Q-Q plot for Loan Amount")
+
+TN2019_regression <- TN2019_init
+TN2019_dTree <- TN2019_init
+TN2019_approved <- subset(TN2019_init, Application_Status == 'approved')
+TN2019_denied <- subset(TN2019_init, Application_Status == 'denied')
 
 
+
+library(ggpubr)
+ggqqplot(TN2019_regression$income)
+ggqqplot(TN2019_regression$property_value)
+ggqqplot(TN2019_regression$loan_amount)
 

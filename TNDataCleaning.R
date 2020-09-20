@@ -42,6 +42,8 @@ TN2019_init <- subset(TN2019_init, select=-denial_reason_4)
 TN2019_init <- subset(TN2019_init, select=-applicant_age_above_62)
 TN2019_init <- subset(TN2019_init, select=-co_applicant_age_above_62)
 
+#   row count = 389728, col count = 72
+
 ##########################################################
 # begin evaluation of the race, ethnicity, sex columns  ##
 ##########################################################
@@ -55,12 +57,15 @@ TN2019_init <- subset(TN2019_init, applicant_race_1!='')
 TN2019_init <- subset(TN2019_init, co_applicant_ethnicity_1!='')
 TN2019_init <- subset(TN2019_init, applicant_ethnicity_1!='')
 
+#   row count = 389592, col count = 72
 
 # remove records for loans that were neither approved nor denied and purchased loans
 # where the entity did not review the loan application or make the credit decision
 TN2019_init <- subset(TN2019_init, action_taken != 6)  # purchased loan
 TN2019_init <- subset(TN2019_init, action_taken != 5)  # file closed for incompleteness
 TN2019_init <- subset(TN2019_init, action_taken != 4)  # application withdrawn by applicant
+
+#   row count = 272973, col count = 72
 
 # remove purchaser_type - identifies type of entity that purchased the loan
 # that was originated by the lender for this record; not useful for this analysis
@@ -81,6 +86,7 @@ TN2019_init <- subset(TN2019_init, co_applicant_race_1 != 7)  # Not applicable
 TN2019_init <- subset(TN2019_init, co_applicant_race_1 != 6)  # info not provided by applicant
 TN2019_init <- subset(TN2019_init, applicant_age != 8888) # age not reported
 
+#   row count = 229883, col count = 71
 
 # remove rows for applications made primarily for business purposes
 TN2019_init <- subset(TN2019_init, business_or_commercial_purpose == 2)
@@ -107,6 +113,7 @@ TN2019_init <- subset(TN2019_init, select=-co_applicant_race_observed)
 TN2019_init <- subset(TN2019_init, select=-applicant_sex_observed)
 TN2019_init <- subset(TN2019_init, select=-co_applicant_sex_observed)
 
+#   row count = 210690, col count = 62
 
 ################################################################################
 # evaluate the 'derived' column level frequencies
@@ -137,7 +144,7 @@ TN2019_init <- subset(TN2019_init, select=-tract_median_age_of_housing_units)  #
 TN2019_init <- subset(TN2019_init, select=-manufactured_home_secured_property_type)  # corresponds to construction method
 TN2019_init <- subset(TN2019_init, select=-manufactured_home_land_property_interest)  # corresponds to construction method
 
-
+#   row count = 210690, col count = 47
 
 ##########################################################################
 # convert action_taken levels from numbers to descriptives
@@ -170,6 +177,7 @@ TN2019_init$Application_Status <- as.factor(TN2019_init$Application_Status)
 # drop action_taken (lower case) column 
 TN2019_init <- subset(TN2019_init, select= -action_taken)
 
+#   row count = 210690, col count = 48
 
 ################################################################################
 #  convert numeric levels to descriptive terms for easier visual interpretation
@@ -397,7 +405,8 @@ convert_other_nonamortizing_features <- function(other_nonamortizing_features){
   else if (other_nonamortizing_features == 2){  return('No other non-fully amortizing features')  }
   else if (other_nonamortizing_features == 1111){ return('Exempt')  }
 }
-TN2019_init$Other_Nonamortizing_Features <- sapply(TN2019_init$other_nonamortizing_features,convert_other_nonamortizing_features)
+TN2019_init$Other_Nonamortizing_Features <- 
+    sapply(TN2019_init$other_nonamortizing_features,convert_other_nonamortizing_features)
 TN2019_init$Other_Nonamortizing_Features <- as.factor(TN2019_init$Other_Nonamortizing_Features)
 # drop other_nonamortizing_features (lower case) column 
 TN2019_init <- subset(TN2019_init, select= -other_nonamortizing_features)
@@ -554,29 +563,10 @@ TN2019_init$Co_Applicant_Credit_Score_Type <- as.factor(TN2019_init$Co_Applicant
 # drop co_applicant_credit_score_type (lower case) column 
 TN2019_init <- subset(TN2019_init, select= -co_applicant_credit_score_type)
 
-#########################################################################
-# convert purchaser_type levels from numbers to descriptives
-convert_purchaser <- function(purchaser_type){
-  if (purchaser_type == 0){  return('Not applicable')  }
-  else if(purchaser_type == 1){  return('Fannie Mae')  }
-  else if (purchaser_type == 2){  return('Ginnie Mae')  }
-  else if (purchaser_type == 3){  return('Freddie Mac')  }
-  else if (purchaser_type == 4){  return('Farmer Mac')  }
-  else if (purchaser_type == 5){  return('Private securitizer')  }
-  else if (purchaser_type == 6){  return('Commercial or savings bank or savings association')  }
-  else if (purchaser_type == 71){  return('Credit union mortgage company or finance company')  }
-  else if (purchaser_type == 72){  return('Life insurance company')  }
-  else if (purchaser_type == 8){  return('Affiliate institution')  }
-  else if (purchaser_type == 9){  return('Other type of purchaser')  }
-}
-TN2019_init$Purchaser_Type <- sapply(TN2019_init$purchaser_type,convert_purchaser)
-TN2019_init$Purchaser_Type<- as.factor(TN2019_init$Purchaser_Type)
-# drop purchaser_type (lower case) column 
-TN2019_init <- subset(TN2019_init, select= -purchaser_type)
 
-summary(TN2019_init)  
-
-# looking for levels w/ 0 obs
+# looking for levels w/ 0 obs and other data issues
+contents(TN2019_init)
+describe(TN2019_init)
 # remove levels in factor variables with 0 observations
 TN2019_init$derived_sex <- factor(TN2019_init$derived_sex)
 TN2019_init$Applicant_Sex <- factor(TN2019_init$Applicant_Sex)
@@ -586,6 +576,13 @@ TN2019_init$Applicant_Ethnicity <- factor(TN2019_init$Applicant_Ethnicity)
 TN2019_init$Applicant_Race <- factor(TN2019_init$Applicant_Race)
 TN2019_init$applicant_age <- factor(TN2019_init$applicant_age)
 TN2019_init$derived_loan_product_type <- factor(TN2019_init$derived_loan_product_type)
+# change property_value to numeric column
+TN2019_init$property_value <- as.double(TN2019_init$property_value)
+# remove NAs for income and property_value
+TN2019_init <- subset(TN2019_init, income !='')
+TN2019_init <- subset(TN2019_init, property_value != '')
+
+#   row count = 197926, col count = 48
 
 ###############################################################################
 # subset the main analysis columns for further analysis
