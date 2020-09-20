@@ -128,8 +128,3 @@ TN2019_denied <- subset(TN2019_init, Application_Status == 'denied')
 
 
 
-library(ggpubr)
-ggqqplot(TN2019_regression$income)
-ggqqplot(TN2019_regression$property_value)
-ggqqplot(TN2019_regression$loan_amount)
-
