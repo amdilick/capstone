@@ -8,7 +8,7 @@ contents(X2019publicTN_allColumns)
 describe(X2019publicTN_allColumns)
 summary(X2019publicTN_allColumns)
 
-# remove columns that have info we don't need
+# remove columns that have the same value for all rows
 TN2019_init <- subset(X2019publicTN_allColumns, select=-activity_year)
 TN2019_init <- subset(TN2019_init, select=-state_code)
 
@@ -37,12 +37,75 @@ TN2019_init <- subset(TN2019_init, select=-denial_reason_2)
 TN2019_init <- subset(TN2019_init, select=-denial_reason_3)
 TN2019_init <- subset(TN2019_init, select=-denial_reason_4)
 
+################################################################################
+# research the info contained in each column
+################################################################################
+
 # remove columns with duplicated age information
 # use applicant_age and co_applicant_age columns
 TN2019_init <- subset(TN2019_init, select=-applicant_age_above_62)
 TN2019_init <- subset(TN2019_init, select=-co_applicant_age_above_62)
 
-#   row count = 389728, col count = 72
+# remove the 'observed' columns - only provides context of how the demo data was collected
+# not useful for this analysis
+TN2019_init <- subset(TN2019_init, select=-applicant_ethnicity_observed)
+TN2019_init <- subset(TN2019_init, select=-co_applicant_ethnicity_observed)
+TN2019_init <- subset(TN2019_init, select=-applicant_race_observed)
+TN2019_init <- subset(TN2019_init, select=-co_applicant_race_observed)
+TN2019_init <- subset(TN2019_init, select=-applicant_sex_observed)
+TN2019_init <- subset(TN2019_init, select=-co_applicant_sex_observed)
+
+#   row count = 389728, col count = 66
+
+# keep construction_method
+# remove derived_dwelling_category
+TN2019_init <- subset(TN2019_init, select=-derived_dwelling_category)
+
+# remove location columns - not meaningful for this analysis
+TN2019_init <- subset(TN2019_init, select=-derived_msa_md)
+TN2019_init <- subset(TN2019_init, select=-census_tract)
+TN2019_init <- subset(TN2019_init, select=-county_code)
+
+#  remove columns that cannot or will not be used for this analysis
+TN2019_init <- subset(TN2019_init, select=-lei)  # Legal Entity Identifier, too many levels to be useful
+TN2019_init <- subset(TN2019_init, select=-conforming_loan_limit)  # not meaningful for this analysis
+TN2019_init <- subset(TN2019_init, select=-hoepa_status)  # not meaningful for this analysis
+TN2019_init <- subset(TN2019_init, select=-tract_population)  # corresponds to census_tract
+TN2019_init <- subset(TN2019_init, select=-tract_minority_population_percent)  # corresponds to census_tract
+TN2019_init <- subset(TN2019_init, select=-ffiec_msa_md_median_family_income)  # not meaningful for this analysis
+TN2019_init <- subset(TN2019_init, select=-tract_to_msa_income_percentage)  # corresponds to census_tract
+TN2019_init <- subset(TN2019_init, select=-tract_owner_occupied_units) # corresponds to census_tract
+TN2019_init <- subset(TN2019_init, select=-tract_one_to_four_family_homes)  # corresponds to census_tract
+TN2019_init <- subset(TN2019_init, select=-tract_median_age_of_housing_units)  # corresponds to census_tract
+TN2019_init <- subset(TN2019_init, select=-manufactured_home_secured_property_type)  # corresponds to construction method
+TN2019_init <- subset(TN2019_init, select=-manufactured_home_land_property_interest)  # corresponds to construction method
+TN2019_init <- subset(TN2019_init, select=-aus_1) # not meaningful for this analysis
+
+##################
+# remove columns only applicable to approved applications
+TN2019_init <- subset(TN2019_init, select =-combined_loan_to_value_ratio)
+TN2019_init <- subset(TN2019_init, select =-interest_rate)
+TN2019_init <- subset(TN2019_init, select =-rate_spread)
+TN2019_init <- subset(TN2019_init, select =-total_loan_costs)
+TN2019_init <- subset(TN2019_init, select =-total_points_and_fees)
+TN2019_init <- subset(TN2019_init, select =-origination_charges)
+TN2019_init <- subset(TN2019_init, select =-discount_points)
+TN2019_init <- subset(TN2019_init, select =-lender_credits)
+TN2019_init <- subset(TN2019_init, select =-loan_term)
+TN2019_init <- subset(TN2019_init, select =-prepayment_penalty_term)
+TN2019_init <- subset(TN2019_init, select =-intro_rate_period)
+# remove columns only applicable to denied applications
+TN2019_init <- subset(TN2019_init, select =-denial_reason_1)
+# remove columns not used in credit decision 
+TN2019_init <- subset(TN2019_init, select=-balloon_payment)
+TN2019_init <- subset(TN2019_init, select=-interest_only_payment)
+TN2019_init <- subset(TN2019_init, select=-negative_amortization)
+TN2019_init <- subset(TN2019_init, select=-other_nonamortizing_features)
+TN2019_init <- subset(TN2019_init, select=-reverse_mortgage)
+TN2019_init <- subset(TN2019_init, select=-submission_of_application)
+TN2019_init <- subset(TN2019_init, select=-initially_payable_to_institution)
+
+
 
 ##########################################################
 # begin evaluation of the race, ethnicity, sex columns  ##
@@ -57,7 +120,7 @@ TN2019_init <- subset(TN2019_init, applicant_race_1!='')
 TN2019_init <- subset(TN2019_init, co_applicant_ethnicity_1!='')
 TN2019_init <- subset(TN2019_init, applicant_ethnicity_1!='')
 
-#   row count = 389592, col count = 72
+#   row count = 389592, col count = 31
 
 # remove records for loans that were neither approved nor denied and purchased loans
 # where the entity did not review the loan application or make the credit decision
@@ -65,7 +128,7 @@ TN2019_init <- subset(TN2019_init, action_taken != 6)  # purchased loan
 TN2019_init <- subset(TN2019_init, action_taken != 5)  # file closed for incompleteness
 TN2019_init <- subset(TN2019_init, action_taken != 4)  # application withdrawn by applicant
 
-#   row count = 272973, col count = 72
+#   row count = 272973, col count = 31
 
 # remove purchaser_type - identifies type of entity that purchased the loan
 # that was originated by the lender for this record; not useful for this analysis
@@ -86,7 +149,7 @@ TN2019_init <- subset(TN2019_init, co_applicant_race_1 != 7)  # Not applicable
 TN2019_init <- subset(TN2019_init, co_applicant_race_1 != 6)  # info not provided by applicant
 TN2019_init <- subset(TN2019_init, applicant_age != 8888) # age not reported
 
-#   row count = 229883, col count = 71
+#   row count = 229883, col count = 31
 
 # remove rows for applications made primarily for business purposes
 TN2019_init <- subset(TN2019_init, business_or_commercial_purpose == 2)
@@ -104,80 +167,30 @@ TN2019_init <- subset(TN2019_init, select=-multifamily_affordable_units)
 # purchased loans where origination took place before Jan 1 2018
 TN2019_init <- subset(TN2019_init, loan_purpose != 5)
 
-# remove the 'observed' columns - only provides context of how the demo data was collected
-# not useful for this analysis
-TN2019_init <- subset(TN2019_init, select=-applicant_ethnicity_observed)
-TN2019_init <- subset(TN2019_init, select=-co_applicant_ethnicity_observed)
-TN2019_init <- subset(TN2019_init, select=-applicant_race_observed)
-TN2019_init <- subset(TN2019_init, select=-co_applicant_race_observed)
-TN2019_init <- subset(TN2019_init, select=-applicant_sex_observed)
-TN2019_init <- subset(TN2019_init, select=-co_applicant_sex_observed)
 
-#   row count = 210690, col count = 62
 
-################################################################################
-# evaluate the 'derived' column level frequencies
-################################################################################
-summary(TN2019_init$derived_dwelling_category)
-# keep construction_method
-# remove derived_dwelling_category
-TN2019_init <- subset(TN2019_init, select=-derived_dwelling_category)
+#   row count = 210690, col count = 26
 
-# remove location columns - not meaningful for this analysis
-TN2019_init <- subset(TN2019_init, select=-derived_msa_md)
-TN2019_init <- subset(TN2019_init, select=-census_tract)
-TN2019_init <- subset(TN2019_init, select=-county_code)
-
-################################################################################
-#  remove columns that cannot or will not be used for this analysis
-################################################################################
-
-TN2019_init <- subset(TN2019_init, select=-lei)  # Legal Entity Identifier, too many levels to be useful
-TN2019_init <- subset(TN2019_init, select=-conforming_loan_limit)  # not meaningful for this analysis
-TN2019_init <- subset(TN2019_init, select=-tract_population)  # corresponds to census_tract
-TN2019_init <- subset(TN2019_init, select=-tract_minority_population_percent)  # corresponds to census_tract
-TN2019_init <- subset(TN2019_init, select=-ffiec_msa_md_median_family_income)  # not meaningful for this analysis
-TN2019_init <- subset(TN2019_init, select=-tract_to_msa_income_percentage)  # corresponds to census_tract
-TN2019_init <- subset(TN2019_init, select=-tract_owner_occupied_units) # corresponds to census_tract
-TN2019_init <- subset(TN2019_init, select=-tract_one_to_four_family_homes)  # corresponds to census_tract
-TN2019_init <- subset(TN2019_init, select=-tract_median_age_of_housing_units)  # corresponds to census_tract
-TN2019_init <- subset(TN2019_init, select=-manufactured_home_secured_property_type)  # corresponds to construction method
-TN2019_init <- subset(TN2019_init, select=-manufactured_home_land_property_interest)  # corresponds to construction method
-
-#   row count = 210690, col count = 47
 
 ##########################################################################
-# convert action_taken levels from numbers to descriptives
-convert_action_taken_descr <- function(action_taken){
-  if (action_taken == 1){  return('Loan originated')  }
-  else if (action_taken == 2){  return('Application approved but not accepted')  }
-  else if (action_taken == 3){  return('Application denied')  }
-  else if (action_taken == 4){  return('Application withdrawn by applicant')  }
-  else if (action_taken == 5){  return('File closed for incompleteness')  }
-  else if (action_taken == 6){  return('Purchased loan')  }
-  else if (action_taken == 7){  return('Preapproval request denied')  }
-  else if (action_taken == 8){  return('Preapproval request approved but not accepted')  }
-}
-TN2019_init$Action_Taken_Description <- sapply(TN2019_init$action_taken,convert_action_taken_descr)
-TN2019_init$Action_Taken_Description <- as.factor(TN2019_init$Action_Taken_Description)
 
 # map action_taken levels to application_status 
 convert_application_status <- function(action_taken){
-  if (action_taken == 1){  return('approved')  }
-  else if (action_taken == 2){  return('approved')  }
-  else if (action_taken == 3){  return('denied')  }
-  else if (action_taken == 4){  return('withdrawn')  } 
-  else if (action_taken == 5){  return('incomplete')  }
-  else if (action_taken == 6){  return('Purchased loan')  }
-  else if (action_taken == 7){  return('denied')  }
-  else if (action_taken == 8){  return('approved')  }
+  if (action_taken == 1){  return('approved')  }  # loan originated
+  else if (action_taken == 2){  return('approved')  }  # Application approved but not accepted
+  else if (action_taken == 3){  return('denied')  }  #Application denied
+  else if (action_taken == 4){  return('withdrawn')  }  # Application withdrawn by applicant
+  else if (action_taken == 5){  return('incomplete')  }  #File closed for incompleteness
+  else if (action_taken == 6){  return('Purchased loan')  }  # purchased loan
+  else if (action_taken == 7){  return('denied')  }  # Preapproval request denied
+  else if (action_taken == 8){  return('approved')  }  #Preapproval request approved but not accepted
 }
 TN2019_init$Application_Status <- sapply(TN2019_init$action_taken,convert_application_status)
 TN2019_init$Application_Status <- as.factor(TN2019_init$Application_Status)
 # drop action_taken (lower case) column 
 TN2019_init <- subset(TN2019_init, select= -action_taken)
 
-#   row count = 210690, col count = 48
+#   row count = 210690, col count = 26
 
 ################################################################################
 #  convert numeric levels to descriptive terms for easier visual interpretation
@@ -327,18 +340,6 @@ TN2019_init$Preapproval <- as.factor(TN2019_init$Preapproval)
 TN2019_init <- subset(TN2019_init, select= -preapproval)
 
 ##########################################################################
-# convert reverse_mortgage levels from numbers to descriptives
-convert_reverse_mortgage <- function(reverse_mortgage){
-  if (reverse_mortgage == 1){  return('Reverse Mortgage')  }
-  else if (reverse_mortgage == 2){  return('Not a reverse mortgage')  }
-  else if (reverse_mortgage == 1111){  return('Exempt')  }
-}
-TN2019_init$Reverse_Mortgage <- sapply(TN2019_init$reverse_mortgage,convert_reverse_mortgage)
-TN2019_init$Reverse_Mortgage <- as.factor(TN2019_init$Reverse_Mortgage)
-# drop reverse_mortgage (lower case) column 
-TN2019_init <- subset(TN2019_init, select= -reverse_mortgage)
-
-##########################################################################
 # convert open_end_line_of_credit levels from numbers to descriptives
 convert_open_LOC <- function(open_end_line_of_credit){
   if (open_end_line_of_credit == 1){  return('Open-end line of credit')  }
@@ -349,67 +350,6 @@ TN2019_init$Open_End_Line_of_Credit <- sapply(TN2019_init$open_end_line_of_credi
 TN2019_init$Open_End_Line_of_Credit <- as.factor(TN2019_init$Open_End_Line_of_Credit)
 # drop open_end_line_of_credit (lower case) column 
 TN2019_init <- subset(TN2019_init, select= -open_end_line_of_credit)
-
-##########################################################################
-# convert hoepa_status levels from numbers to descriptives
-convert_hoepa_status <- function(hoepa_status){
-  if (hoepa_status == 1){  return('High-cost mortgage')  }
-  else if (hoepa_status == 2){  return('Not a high-cost mortgage')  }
-  else if (hoepa_status == 3){  return('Not applicable')  }
-}
-TN2019_init$Hoepa_Status <- sapply(TN2019_init$hoepa_status,convert_hoepa_status)
-TN2019_init$Hoepa_Status <- as.factor(TN2019_init$Hoepa_Status)
-# drop hoepa_status (lower case) column 
-TN2019_init <- subset(TN2019_init, select= -hoepa_status)
-
-##########################################################################
-# convert negative_amortization levels from numbers to descriptives
-convert_negative_amortization <- function(negative_amortization){
-  if (negative_amortization == 1){  return('Negative amortization')  }
-  else if (negative_amortization == 2){  return('No negative amortization')  }
-  else if (negative_amortization == 1111){  return('Exempt')  }
-}
-TN2019_init$Negative_Amortization <- sapply(TN2019_init$negative_amortization,convert_negative_amortization)
-TN2019_init$Negative_Amortization <- as.factor(TN2019_init$Negative_Amortization)
-# drop negative_amortization (lower case) column 
-TN2019_init <- subset(TN2019_init, select= -negative_amortization)
-
-##########################################################################
-# convert interest_only_payment levels from numbers to descriptives
-convert_interest_only_payment <- function(interest_only_payment){
-  if (interest_only_payment == 1){  return('Interest-only payments')  }
-  else if (interest_only_payment == 2){  return('No interest-only payments')  }
-  else if (interest_only_payment == 1111){  return('Exempt')  }
-}
-TN2019_init$Interest_Only_Payment <- sapply(TN2019_init$interest_only_payment,convert_interest_only_payment)
-TN2019_init$Interest_Only_Payment <- as.factor(TN2019_init$Interest_Only_Payment)
-# drop interest_only_payment (lower case) column 
-TN2019_init <- subset(TN2019_init, select= -interest_only_payment)
-
-##########################################################################
-# convert balloon_payment levels from numbers to descriptives
-convert_balloon_payment <- function(balloon_payment){
-  if (balloon_payment == 1){  return('Balloon payment')  }
-  else if (balloon_payment == 2){  return('Not a balloon payment')  }
-  else if (balloon_payment == 1111){ return('Exempt')  }
-}
-TN2019_init$Balloon_Payment <- sapply(TN2019_init$balloon_payment,convert_balloon_payment)
-TN2019_init$Balloon_Payment <- as.factor(TN2019_init$Balloon_Payment)
-# drop balloon_payment (lower case) column 
-TN2019_init <- subset(TN2019_init, select= -balloon_payment)
-
-##########################################################################
-# convert other_nonamortizing_features levels from numbers to descriptives
-convert_other_nonamortizing_features <- function(other_nonamortizing_features){
-  if (other_nonamortizing_features == 1){  return('Other non-fully amortizing features')  }
-  else if (other_nonamortizing_features == 2){  return('No other non-fully amortizing features')  }
-  else if (other_nonamortizing_features == 1111){ return('Exempt')  }
-}
-TN2019_init$Other_Nonamortizing_Features <- 
-    sapply(TN2019_init$other_nonamortizing_features,convert_other_nonamortizing_features)
-TN2019_init$Other_Nonamortizing_Features <- as.factor(TN2019_init$Other_Nonamortizing_Features)
-# drop other_nonamortizing_features (lower case) column 
-TN2019_init <- subset(TN2019_init, select= -other_nonamortizing_features)
 
 ##########################################################################
 # convert construction_method levels from numbers to descriptives
@@ -459,70 +399,6 @@ TN2019_init$Occupancy_Type <- as.factor(TN2019_init$Occupancy_Type)
 TN2019_init <- subset(TN2019_init, select= -occupancy_type)
 
 ##########################################################################
-# convert submission_of_application levels from numbers to descriptives
-convert_submission_of_application <- function(submission_of_application){
-  if (submission_of_application == 1){  return('Submitted directly to your institution')  }
-  else if (submission_of_application == 2){  return('Not submitted directly to your institution')  }
-  else if (submission_of_application == 3){  return('Not applicable')  }
-  else if (submission_of_application == 1111){  return('Exempt')  }
-}
-TN2019_init$Submission_Of_Application <-
-    sapply(TN2019_init$submission_of_application,convert_submission_of_application)
-TN2019_init$Submission_Of_Application <- as.factor(TN2019_init$Submission_Of_Application)
-# drop submission_of_application (lower case) column 
-TN2019_init <- subset(TN2019_init, select= -submission_of_application)
-
-##########################################################################
-# convert initially_payable_to_institution levels from numbers to descriptives
-convert_initially_payable_to_institution<- function(initially_payable_to_institution){
-  if (initially_payable_to_institution == 1){  return('Initially payable to your institution')  }
-  else if (initially_payable_to_institution == 2){  return('Not initially payable to your institution')  }
-  else if (initially_payable_to_institution == 3){  return('Not applicable')  }
-  else if (initially_payable_to_institution == 1111){  return('Exempt')  }
-}
-TN2019_init$Initially_Payable_To_Institution <- 
-    sapply(TN2019_init$initially_payable_to_institution,convert_initially_payable_to_institution)
-TN2019_init$Initially_Payable_To_Institution <- as.factor(TN2019_init$Initially_Payable_To_Institution)
-# drop initially_payable_to_institution (lower case) column 
-TN2019_init <- subset(TN2019_init, select= -initially_payable_to_institution)
-
-##########################################################################
-# convert aus_1 (automated underwriting system) levels from numbers to descriptives
-convert_aus_1<- function(aus_1){
-  if (aus_1 == 1){  return('Desktop Underwriter (DU)')  }
-  else if (aus_1 == 2){  return('Loan Prospector (LP) or Loan Product Advisor')  }
-  else if (aus_1 == 3){  return('Technology Open to Approved Lenders (TOTAL) Scorecard')  }
-  else if (aus_1 == 4){  return('Guaranteed Underwriting System (GUS)')  }
-  else if (aus_1 == 5){  return('Other')  }
-  else if (aus_1 == 6){  return('Not applicable')  }
-  else if (aus_1 == 1111){  return('Exempt')  }
-}
-TN2019_init$AUS <- sapply(TN2019_init$aus_1,convert_aus_1)
-TN2019_init$AUS <- as.factor(TN2019_init$AUS)
-# drop aus_1 (lower case) column 
-TN2019_init <- subset(TN2019_init, select= -aus_1)
-
-##########################################################################
-# convert denial_reason_1 levels from numbers to descriptives
-convert_denial_reason_1<- function(denial_reason_1){
-  if (denial_reason_1 == 1){  return('Debt-to-income ratio')  }
-  else if (denial_reason_1 == 2){  return('Employment history')  }
-  else if (denial_reason_1 == 3){  return('Credit history')  }
-  else if (denial_reason_1 == 4){  return('Collateral')  }
-  else if (denial_reason_1 == 5){  return('Insufficient cash (downpayment, closing costs)')  }
-  else if (denial_reason_1 == 6){  return('Unverifiable information')  }
-  else if (denial_reason_1 == 7){  return('Credit application incomplete')  }
-  else if (denial_reason_1 == 8){  return('Mortgage insurance denied')  }
-  else if (denial_reason_1 == 9){  return('Other')  }
-  else if (denial_reason_1 == 10){  return('Not applicable')  }
-  else if (denial_reason_1 == 1111){  return('Exempt')  }
-}
-TN2019_init$Denial_Reason <- sapply(TN2019_init$denial_reason_1,convert_denial_reason_1)
-TN2019_init$Denial_Reason <- as.factor(TN2019_init$Denial_Reason)
-# drop denial_reason_1 (lower case) column 
-TN2019_init <- subset(TN2019_init, select= -denial_reason_1)
-
-##########################################################################
 # convert applicant_credit_score_type levels from numbers to descriptives
 convert_applicant_credit_score_type<- function(applicant_credit_score_type){
   if (applicant_credit_score_type == 1){  return('Equifax Beacon 5.0')  }
@@ -566,23 +442,31 @@ TN2019_init <- subset(TN2019_init, select= -co_applicant_credit_score_type)
 
 # looking for levels w/ 0 obs and other data issues
 contents(TN2019_init)
-describe(TN2019_init)
+# change property_value to numeric column
+TN2019_init$property_value <- as.double(TN2019_init$property_value)
+# remove NAs for income, property_value, debt to income ratio
+TN2019_init <- subset(TN2019_init, income !='')
+TN2019_init <- subset(TN2019_init, property_value != '')
+TN2019_init <- subset(TN2019_init, debt_to_income_ratio != '')
+
+summary(TN2019_init)
 # remove levels in factor variables with 0 observations
 TN2019_init$derived_sex <- factor(TN2019_init$derived_sex)
-TN2019_init$Applicant_Sex <- factor(TN2019_init$Applicant_Sex)
 TN2019_init$derived_ethnicity <- factor(TN2019_init$derived_ethnicity)
 TN2019_init$derived_race <- factor(TN2019_init$derived_race)
 TN2019_init$Applicant_Ethnicity <- factor(TN2019_init$Applicant_Ethnicity)
 TN2019_init$Applicant_Race <- factor(TN2019_init$Applicant_Race)
 TN2019_init$applicant_age <- factor(TN2019_init$applicant_age)
 TN2019_init$derived_loan_product_type <- factor(TN2019_init$derived_loan_product_type)
-# change property_value to numeric column
-TN2019_init$property_value <- as.double(TN2019_init$property_value)
-# remove NAs for income and property_value
-TN2019_init <- subset(TN2019_init, income !='')
-TN2019_init <- subset(TN2019_init, property_value != '')
+TN2019_init$Open_End_Line_of_Credit <- factor(TN2019_init$Open_End_Line_of_Credit)
+TN2019_init$debt_to_income_ratio <- factor(TN2019_init$debt_to_income_ratio)
 
-#   row count = 197926, col count = 48
+summary(TN2019_init$debt_to_income_ratio)
+
+
+summary(TN2019_init)
+
+#   row count = 194873, col count = 26
 
 ###############################################################################
 # subset the main analysis columns for further analysis

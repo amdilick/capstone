@@ -1,5 +1,5 @@
 # Univariate stats - graphs for demographic details
-#  rows = 197926, cols = 48
+#  rows = 197926, cols =27
 library(ggplot2)
 library(gridExtra)
 
@@ -57,6 +57,20 @@ grid.arrange(a1, a2, ncol=1)
 # keep applicant_age
 TN2019_init <- subset(TN2019_init, select=-co_applicant_age)
 
+################### CREDIT SCORE
+c1 <- ggplot(TN2019_init, aes(x=Applicant_Credit_Score_Type)) + ggtitle("Applicant Credit Score Type") + 
+  xlab("Applicant Credit Score Type") + geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + 
+  ylab("Percentage") + coord_flip() + theme_minimal()
+c2 <- ggplot(TN2019_init, aes(x=Co_Applicant_Credit_Score_Type)) + ggtitle("Co-Applicant Credit Score Type") + 
+  xlab("Co-Applicant Credit Score Type") + geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + 
+  ylab("Percentage") + coord_flip() + theme_minimal()
+grid.arrange(c1, c2, ncol=1)
+
+# keep applicant_credit_score_type
+TN2019_init <- subset(TN2019_init, select=-Co_Applicant_Credit_Score_Type)
+table(TN2019_init$Applicant_Credit_Score_Type)
+TN2019_init$Applicant_Credit_Score_Type <- factor(TN2019_init$Applicant_Credit_Score_Type)
+
 
 ##################  LOAN TYPE
 
@@ -72,16 +86,11 @@ grid.arrange(loan1, loan2, loan3, ncol=1)
 TN2019_init <- subset(TN2019_init, select=-derived_loan_product_type)
 
 
-##################  ACTION TAKEN
+##################  APPLICATION STATUS
 
 act1 <- ggplot(TN2019_init, aes(x=Application_Status)) + ggtitle("Application Status") + xlab("Application Status") +
   geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
 plot(act1)
-act2 <- ggplot(TN2019_init, aes(x=Action_Taken_Description)) + ggtitle("Action Taken") + xlab("Action Taken") + 
-  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
-act3 <- ggplot(TN2019_init, aes(x=Denial_Reason)) + ggtitle("Denial Reason") + xlab("Denial Reason") + 
-  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
-grid.arrange(act2, act3, ncol=1)
 
 
 ##################  OTHER CATEGORIES
@@ -94,37 +103,63 @@ other3 <- ggplot(TN2019_init, aes(x=Occupancy_Type)) + ggtitle("Occupancy Type")
   geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
 grid.arrange(other1, other2, other3, ncol=1)
 
-#  rows = 197926, cols = 40
+other4 <- ggplot(TN2019_init, aes(x=Preapproval)) + ggtitle("Preapproval") + xlab("Preapproval") +
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+other5 <- ggplot(TN2019_init, aes(x=Open_End_Line_of_Credit)) + ggtitle("Open-end Line of Credit") + xlab("Open-end Line of Credit") + 
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+grid.arrange(other4, other5, ncol=1)
 
-# create subset for regression analysis
-TN2019_regression <- TN2019_init
-
-##################
-# remove columns only applicable to approved applications
-TN2019_regression <- subset(TN2019_regression, select =-combined_loan_to_value_ratio)
-TN2019_regression <- subset(TN2019_regression, select =-interest_rate)
-TN2019_regression <- subset(TN2019_regression, select =-rate_spread)
-TN2019_regression <- subset(TN2019_regression, select =-total_loan_costs)
-TN2019_regression <- subset(TN2019_regression, select =-total_points_and_fees)
-TN2019_regression <- subset(TN2019_regression, select =-origination_charges)
-TN2019_regression <- subset(TN2019_regression, select =-discount_points)
-TN2019_regression <- subset(TN2019_regression, select =-lender_credits)
-TN2019_regression <- subset(TN2019_regression, select =-loan_term)
-TN2019_regression <- subset(TN2019_regression, select =-prepayment_penalty_term)
-TN2019_regression <- subset(TN2019_regression, select =-intro_rate_period)
+other14 <- ggplot(TN2019_init, aes(x=debt_to_income_ratio)) + ggtitle("Debt To Income Ratio") + xlab("Debt To Income Ratio") +
+  geom_bar(aes(y = 100*(..count..)/sum(..count..)), width = 0.5) + ylab("Percentage") + coord_flip() + theme_minimal()
+grid.arrange(other14, ncol=1)
 
 ##################  numeric columns - loan amount, property value, income
 library(dplyr)
 library(ggpubr)
 
-qqnorm(TN2019_regression$income, main="Normal Q-Q plot for Income")
-qqnorm(TN2019_regression$property_value, main="Normal Q-Q plot for Property Value")
-qqnorm(TN2019_regression$loan_amount, main="Normal Q-Q plot for Loan Amount")
+qqnorm(TN2019_init$income, main="Normal Q-Q plot for Income")
+qqnorm(TN2019_init$property_value, main="Normal Q-Q plot for Property Value")
+qqnorm(TN2019_init$loan_amount, main="Normal Q-Q plot for Loan Amount")
 
+#  rows = 194873, cols = 17
+TN_numeric <- subset(TN2019_init, select=c('income', 'property_value', 'loan_amount'))
+TN_numeric <- subset(TN2019_init, income<= 1000)
+ggdensity(TN_numeric$income)
+ggdensity(TN_numeric$property_value)
+
+
+
+# create subset for regression analysis
 TN2019_regression <- TN2019_init
+
+
+TN2019_init_backup <- TN2019_init
+
 TN2019_dTree <- TN2019_init
 TN2019_approved <- subset(TN2019_init, Application_Status == 'approved')
 TN2019_denied <- subset(TN2019_init, Application_Status == 'denied')
 
+tbl_appr_ethn <- table(TN2019_approved$derived_ethnicity)
+tbl_den_ethn <- table(TN2019_denied$derived_ethnicity)
+print(tbl_appr_ethn)
+print(tbl_den_ethn)
+prop.table(tbl_appr_ethn)
+prop.table(tbl_den_ethn)
 
+tbl_appr_race <- table(TN2019_approved$derived_race)
+tbl_den_race <- table(TN2019_denied$derived_race)
+print(tbl_appr_race)
+print(tbl_den_race)
+prop.table(tbl_appr_race)
+prop.table(tbl_den_race)
 
+tbl_appr_race <- table(TN2019_approved$derived_race)
+tbl_den_race <- table(TN2019_denied$derived_race)
+print(tbl_appr_race)
+print(tbl_den_race)
+prop.table(tbl_appr_race)
+prop.table(tbl_den_race)
+
+tbl_ethn <- table(TN2019_init$Application_Status, TN2019_init$derived_ethnicity)
+print(tbl_ethn)
+prop.table(tbl_ethn)
